@@ -1,0 +1,767 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>“We touch bros but we no gay” — Prototype</title>
+  <meta name="description" content="A text-native scrollytelling prototype." />
+
+  <style>
+    :root{
+      --bg: #ffffff;
+      --fg: #111111;
+      --muted: rgba(0,0,0,.62);
+      --faint: rgba(0,0,0,.06);
+      --hair: rgba(0,0,0,.12);
+
+      --maxw: 72ch;
+      --maxwPadlock: 50ch;
+
+      --lh: 1.62;
+      --lhPadlock: 1.44;
+
+      --padBg: #f6f6f6;
+      --padEdge: rgba(0,0,0,.10);
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--fg);
+      font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+      line-height: var(--lh);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    a{ color:inherit; }
+    .wrap{
+      position:relative;
+      z-index:2;
+    }
+
+    /* persistent “code” layer */
+    .code-layer{
+      position:fixed;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 2rem;
+    }
+    .code-layer .code{
+      width:100%;
+      text-align:center;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      font-weight: 700;
+      letter-spacing: .02em;
+      font-size: clamp(2rem, 6vw, 5rem);
+      color: rgba(0,0,0,.04);
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 900ms ease, transform 900ms ease;
+      user-select:none;
+    }
+    body.code-on .code-layer .code{
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* top chrome */
+    header{
+      padding: 3.5rem 1.25rem 2rem;
+      border-bottom: 1px solid var(--hair);
+      background: linear-gradient(to bottom, rgba(0,0,0,.02), rgba(0,0,0,0));
+    }
+    .kicker{
+      max-width: var(--maxw);
+      margin: 0 auto .75rem;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      font-size: .9rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    h1{
+      max-width: var(--maxw);
+      margin: 0 auto;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      line-height: 1.1;
+      letter-spacing: -.01em;
+    }
+    .dek{
+      max-width: var(--maxw);
+      margin: 1rem auto 0;
+      font-size: 1.15rem;
+      color: var(--muted);
+    }
+    .meta{
+      max-width: var(--maxw);
+      margin: 1.25rem auto 0;
+      padding-top: .75rem;
+      border-top: 1px solid var(--hair);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      font-size: .92rem;
+      color: var(--muted);
+      display:flex;
+      gap: 1rem;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    /* main column */
+    main{
+      padding: 2.25rem 1.25rem 5rem;
+    }
+    .col{
+      max-width: var(--maxw);
+      margin: 0 auto;
+    }
+
+    /* section beats */
+    section.beat{
+      padding: 2rem 0;
+      border-bottom: 1px solid rgba(0,0,0,.06);
+    }
+    section.beat:last-child{ border-bottom: none; }
+
+    .label{
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      font-size: .9rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 0 0 1rem;
+    }
+    p{
+      margin: 1.1rem 0;
+      font-size: 1.08rem;
+    }
+    .small{
+      font-size: 1rem;
+      color: var(--muted);
+    }
+
+    /* scroll “steps” feel: tiny pause illusion via subtle fade-in */
+    .step{
+      opacity: .35;
+      transform: translateY(6px);
+      transition: opacity 520ms ease, transform 520ms ease;
+    }
+    .step.in{
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* PADLOCK MODE toggled on body */
+    body.padlock{
+      background: #fbfbfb;
+    }
+    body.padlock .col{
+      max-width: var(--maxwPadlock);
+      line-height: var(--lhPadlock);
+    }
+    body.padlock header{
+      border-bottom-color: rgba(0,0,0,.18);
+      background: linear-gradient(to bottom, rgba(0,0,0,.05), rgba(0,0,0,0));
+    }
+    body.padlock main{
+      background: linear-gradient(to bottom, rgba(0,0,0,.03), rgba(0,0,0,0) 25%);
+    }
+    body.padlock section.beat{
+      background: var(--padBg);
+      border: 1px solid var(--padEdge);
+      border-radius: 14px;
+      padding: 1.6rem 1.25rem;
+      margin: 1.2rem 0;
+    }
+
+    /* forbidden term */
+    .forbidden{
+      opacity: .48;
+      transition: opacity 250ms ease;
+    }
+
+    /* accumulation counter */
+    .hud{
+      position: sticky;
+      top: .75rem;
+      z-index: 5;
+      display:flex;
+      justify-content:flex-end;
+      margin-bottom: 1rem;
+    }
+    .counter{
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      font-size: .92rem;
+      color: rgba(0,0,0,.70);
+      background: rgba(255,255,255,.86);
+      border: 1px solid rgba(0,0,0,.10);
+      border-radius: 999px;
+      padding: .45rem .75rem;
+      backdrop-filter: blur(6px);
+      display:flex;
+      gap: .75rem;
+      align-items:center;
+    }
+    .dot{
+      width:7px; height:7px; border-radius:50%;
+      background: rgba(0,0,0,.32);
+      display:inline-block;
+    }
+    .counter strong{
+      color: rgba(0,0,0,.90);
+      font-weight: 650;
+    }
+
+    /* mantra margin */
+    .mantra{
+      position: fixed;
+      right: 1rem;
+      top: 35%;
+      z-index: 4;
+      width: 14rem;
+      pointer-events:none;
+      opacity: 0;
+      transform: translateX(10px);
+      transition: opacity 450ms ease, transform 450ms ease;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      color: rgba(0,0,0,.55);
+    }
+    body.mantra-on .mantra{
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .mantra .line{
+      border-left: 2px solid rgba(0,0,0,.14);
+      padding-left: .75rem;
+      margin: .8rem 0;
+      font-size: .92rem;
+      line-height: 1.25;
+      filter: blur(0px);
+    }
+    .mantra .line.degrade-1{ opacity:.75; clip-path: inset(0 0 0 0); }
+    .mantra .line.degrade-2{ opacity:.58; clip-path: inset(0 0 0 12px); transform: rotate(-1deg); }
+    .mantra .line.degrade-3{ opacity:.42; clip-path: inset(0 0 0 22px); transform: rotate(1deg); }
+    .mantra .line.degrade-4{ opacity:.28; clip-path: inset(0 0 0 36px); filter: blur(.4px); }
+
+    /* mirrored block */
+    .mirror{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin: 1.3rem 0 0;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(0,0,0,.10);
+    }
+    @media (max-width: 860px){
+      .mantra{ display:none; }
+      .mirror{ grid-template-columns: 1fr; }
+    }
+    .card{
+      border: 1px solid rgba(0,0,0,.10);
+      border-radius: 12px;
+      padding: 1rem 1rem .9rem;
+      background: rgba(255,255,255,.75);
+    }
+    .card h3{
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      font-size: .92rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      margin: 0 0 .5rem;
+      color: rgba(0,0,0,.62);
+    }
+    .hl{
+      background: rgba(0,0,0,.06);
+      padding: 0 .18rem;
+      border-radius: 4px;
+    }
+    .hl.forbidden{
+      background: rgba(0,0,0,.035);
+    }
+
+    /* footer credits */
+    footer{
+      padding: 3rem 1.25rem 4rem;
+      border-top: 1px solid var(--hair);
+      background: rgba(0,0,0,.015);
+    }
+    .credits{
+      max-width: var(--maxw);
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: .98rem;
+    }
+    .hr{
+      height: 1px;
+      background: rgba(0,0,0,.08);
+      margin: 1.25rem 0;
+    }
+
+    /* reduce motion */
+    @media (prefers-reduced-motion: reduce){
+      .step, .code-layer .code, .mantra{ transition:none !important; transform:none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="code-layer" aria-hidden="true">
+    <div class="code" id="codeText">we touch bros but we no gay</div>
+  </div>
+
+  <aside class="mantra" aria-hidden="true" id="mantra">
+    <div class="line degrade-1">we touch bros but we no gay</div>
+    <div class="line degrade-2">we touch bros but we no gay</div>
+    <div class="line degrade-3">we touch bros but we no gay</div>
+    <div class="line degrade-4">we touch bros but we no gay</div>
+  </aside>
+
+  <div class="wrap">
+    <header>
+      <div class="kicker">Prototype — text-native scrollytelling</div>
+      <h1>“We touch bros but we no gay”: The hidden intimacies of Ghana’s fraud boys</h1>
+      <p class="dek">
+        Summary: Padlocked inside for months to work on online scams, young men are forbidden to touch <span class="forbidden">women</span> as part of a cleansing ritual.
+        In the silence of that isolation, they reach for each other—and sometimes for trans <span class="forbidden">women</span>—exploiting a loophole that stays behind closed doors.
+      </p>
+      <div class="meta">
+        <div>Draft prototype for GitHub Pages</div>
+        <div class="small">Scroll slowly. The page changes state around “Padlock.”</div>
+      </div>
+    </header>
+
+    <main>
+      <div class="col">
+
+        <!-- BEAT 0: Code / entry -->
+        <section class="beat" data-beat="code">
+          <div class="label">Code</div>
+
+          <p class="step">
+            <strong>“We touch bros but we no gay”</strong>
+          </p>
+
+          <p class="step small">
+            A prototype that treats the story’s core logic—secrecy, discipline, loopholes—as layout rules rather than “illustration.”
+          </p>
+        </section>
+
+        <!-- BEAT 1: Uche origin -->
+        <section class="beat" data-beat="origin">
+          <div class="label">Uche Kamal</div>
+
+          <p class="step">
+            Uche Kamal* built his first fortune by inventing an orphanage that didn’t exist. At twenty, with nothing but a borrowed computer in a dingy Accra internet café, he wrote to a Christian charity in the UK, spinning a story of abandoned children and desperate need. They sent $700 and he pocketed every cedi.
+          </p>
+
+          <p class="step">
+            But, as he tells me now at 32, his path into the world of fraud began much earlier, at seventeen, when he left a quiet village in Umuaru, Imo State, for Ghana. His father had just died, and life at home had grown unbearably hard for his mother and seven younger siblings, meaning school was no longer an option. So when an uncle offered him a place in Abbossey Okai, a bustling spare-parts district in Accra, to learn the trade and earn something, he agreed.
+          </p>
+
+          <p class="step">
+            In Ghana, he shared a room with eight other people in a slum near the Accra Cocoa Marketing Board station. He hated every part of it, he told me, sucking his teeth and dabbing at the sweat on his face with a handkerchief. He was the youngest in the stifling room and was constantly sent on errands by the older men, even when he was exhausted from sleeping on the floor.
+          </p>
+
+          <p class="step">
+            One of the senior boys from Lagos took a liking to him for his obedience and became his first mentor. At 20, he taught him how to smoke and began taking him along on his daily rounds, which often involved working out of local internet cafés in Accra. It was there Uche was introduced to the budding criminal underworld of penpal culture and Yahoo Mail chatrooms, which cybercriminals used to meet clients.
+          </p>
+
+          <p class="step">
+            Shortly after was when he made his first money $700 fortune from the UK Christian Charity. He reinvested that money into more successful scams, selling fictitious land and gold to men in Australia and the US.
+          </p>
+        </section>
+
+        <!-- BEAT 2: Accumulation counter -->
+        <section class="beat" data-beat="accumulation" id="accumulation">
+          <div class="label">Accumulation</div>
+
+          <div class="hud" aria-hidden="true">
+            <div class="counter">
+              <span class="dot"></span>
+              <span>Accumulation:</span>
+              <strong id="accumValue">0</strong>
+              <span id="accumLabel" class="small">starting</span>
+            </div>
+          </div>
+
+          <p class="step">
+            Now, Uche considers himself successful. He owns three houses—two in Accra and one in Tamale—and a string of restaurants generating legitimate income. He has four personal cars and more than eleven tricycles operating for him just in northern Ghana.
+          </p>
+
+          <p class="step">
+            A busy man, Uche had postponed our meeting several times over eight months since we were first introduced by my ex-boyfriend. Even during our eventual meeting at a studio on the outskirts of Tamale (one of West Africa’s fastest growing cities), his phone kept ringing and buzzing with text messages. After I politely asked him to turn it off, we started our conversation.
+          </p>
+
+          <p class="step">
+            I had taken a deep interest in researching the role of secrecy in male intimacy and male/male sexual relationships after first discussing the habits of “fraud boys” — young internet scammers operating primarily in Ghana—with my ex-boyfriend.
+          </p>
+        </section>
+
+        <!-- BEAT 3: Context / sakawa -->
+        <section class="beat" data-beat="context">
+          <div class="label">Sakawa</div>
+
+          <p class="step">
+            Cybercrime, locally known as sakawa, started gaining prominence in Ghana in the late 1990’s. This term, derived from Hausa words loosely interpreted as “put inside” or “put money inside,” has come to represent a complex combination of internet fraud (mainly romance scams) and traditional spiritual practices that shape the lives of many poor young Ghanaian men.
+          </p>
+
+          <p class="step">
+            It is believed to have originated from Zongo (predominantly muslim) communities such as Nima, Mamobi, and Accra New Town. It evolved from the penpal culture that flourished as Ghana encouraged internet adoption and ICT growth. It became more sophisticated with the influx of foreigners and the increase in knowledge exchange, especially between youth in Ghana and Nigeria As internet access spread, so did sakawa.
+          </p>
+
+          <p class="step">
+            In 2007, these scams became intertwined with ritual practices, as many fraudsters began consulting traditional spiritualists to manipulate their victims. By 2013, Ghana ranked second in Africa and seventh globally in cybercrime rates, prompting public outcry and eventual government intervention.
+          </p>
+
+          <p class="step">
+            This July and in a case that sparked headlines, the U.S. government announced that a Ghanaian national Joseph Badu Boateng, aka “Dada Joe Remix” had been extradited to the United States for his role in a fraud scheme targeting the elderly.
+          </p>
+        </section>
+
+        <!-- BEAT 4: Meeting Uche -->
+        <section class="beat" data-beat="meeting">
+          <div class="label">Meeting Uche Kamal</div>
+
+          <p class="step">
+            Though he was born in Nigeria, Uche identifies as Ghanaian. He showed me his Ghana card and mentioned that he spoke fluent Twi and Ga. After his father’s death, continuing education in Nigeria became impossible, so moving to Ghana seemed the only logical step.
+          </p>
+
+          <p class="step">
+            Uche was young but he was wise and business savvy, just like his uncles. He learnt fast, and it wasn’t any different when he was introduced to online fraud. He was never arrested and boasts of a “successful” career that many young scammers may even aspire to. Today, he insists he is solely focused on legitimate ventures.
+          </p>
+
+          <p class="step">
+            “African men also deserve a shot at life, to be rich and have access to cars and houses like white men and celebrities did,” Uche says. “We are intelligent people when we are given chances.”n
+          </p>
+
+          <p class="step">
+            Indeed true to his philosophy, Uche has dedicated some of his properties in Accra and Tamale to mentoring young men eager to succeed. They live rent-free, eat for free, and have access to high-speed internet—all tools to help them concentrate on making money. Frustrated by recent poor internet service, he is even considering purchasing a private internet service provider (ISP).
+          </p>
+        </section>
+
+        <!-- BEAT 5: PADLOCK enters (page state changes here) -->
+        <section class="beat" data-beat="padlock" id="padlock">
+          <div class="label">Padlock</div>
+
+          <p class="step">
+            I visited one of Uche’s houses one midnight in July, accompanied by my ex-boyfriend, who first introduced us. The house, known among the boys as “Padlock” was an unassuming building with two bedrooms, a large hall, a kitchen downstairs, and at least three more rooms upstairs.
+          </p>
+
+          <p class="step">
+            The name carried its own history. In their world, “Padlock” refers to long periods (usually months) of working in a house that the fraud boys never leave. It means total immersion in the work of scamming and is designed to eliminate any external distractions.
+          </p>
+
+          <p class="step">
+            The house was what I can only describe as a sanctified scammer sanctuary where contact with the outside world, especially with <span class="forbidden">women</span>, was absolutely discouraged. The boys entered the house and did not come out for months yet the dedication and discipline I saw on their faces shocked me.
+          </p>
+
+          <p class="step">
+            I counted eleven young men inside the house—five of whom I spoke to. All were Ghanaians. The eldest, 27-year-old Joey* from Agona Swedru, had been padlocked for three years.
+          </p>
+
+          <p class="step">
+            “I want to make $200,000 before I leave this place or talk to my family in person again,” Joey told me. His family believed he was studying in Turkey. To validate the lie, he occasionally travelled there to take pictures.
+          </p>
+
+          <p class="step">
+            “I send them money too when I have. Because of family and sometimes issues it is hard to make money lately but it is not impossible. I know someone here who made more than that in two months during covid last year. It is luck and a lot of investment in your work. Time and money. Patience and dedication.”
+          </p>
+        </section>
+
+        <!-- BEAT 6: Rituals -->
+        <section class="beat" data-beat="rituals">
+          <div class="label">Rituals, luck, and brotherhood</div>
+
+          <p class="step">
+            One evening at the beachside with my ex-boyfriend, I asked about rumours of coffins and rituals among fraud boys and how true they were. In the 2000s, when I was growing up as a teen, several stories on the local news and movies about the rituals of fraud boys had traumatised me and my cousins. There were stories of fraudsters engaging in ritual practices involving coffins and abstaining from bathing to attract luck.
+          </p>
+
+          <p class="step">
+            My ex laughed and assured me there were no coffins, at least not with the boys he knew. But he did not deny the rumours of no-bathing, explaining that each scammer adopted different routines for luck. It was a combination of modern technology and traditional African spirituality.
+          </p>
+
+          <p class="step">
+            When I asked Uche if his brothers had to perform such rituals before padlocking, he laughed and admitted they did, but declined to elaborate.
+          </p>
+        </section>
+
+        <!-- BEAT 7: Joey backstory -->
+        <section class="beat" data-beat="joey">
+          <div class="label">Joey</div>
+
+          <p class="step">
+            I reconnected with Joey in March 2025 after matching on Tinder in February. After a brief romantic encounter, I asked to interview him about Uche and the padlock system.
+          </p>
+
+          <p class="step">
+            He first met Uche at an internet café in Agona Swedru. At the time, Joey had just completed secondary school and gained university admission to study real estate, but his mother died six months later after giving birth to twin girls. Left with five orphaned kids, Joey’s education was simply not a priority for his family who were all poor farmers. But he was determined to go to school.
+          </p>
+
+          <p class="step">
+            Encouraged by friends, Joey turned to internet cafés where he learnt to create Facebook accounts and began chatting with potential clients. His first client, Tim, was a rich farmer and single father living in Colorado. Their correspondence didn’t yield benefits and Joey moved on to other clients and other dating websites, pretending to be a gay social worker living in Canada.
+          </p>
+
+          <p class="step">
+            When his first success— $360—came, it was glorious. More success followed and with time Uche heard of him and met him. He proposed to Joey to move to Accra and work for him: he knew a few young men from other countries who could teach him a lot of things, and Joey would get a place to sleep, food to eat, and internet to work. Joey jumped at the opportunity.
+          </p>
+        </section>
+
+        <!-- BEAT 8: Cleansing / abstinence instruction -->
+        <section class="beat" data-beat="cleansing">
+          <div class="label">Cleansing</div>
+
+          <p class="step">
+            Joey moved to Accra with Uche and three other young men. They lived together at Kwashieman. The same night they arrived in Accra, six more recruits from other regions joined them. Uche gave them new laptops and took them for “cleansing.” According to Joey, cleansing was something he knew and expected. All the boys in Agona Swedru did it in different ways.
+          </p>
+
+          <p class="step">
+            Uche assured them they were going to a prophetess, but if any of them wanted to go back home, they were free to leave with their laptops. No one did.
+          </p>
+
+          <p class="step">
+            On a Saturday night, at 8pm, they travelled in a hired bus to Kwahu Pepease in Ghana’s eastern region. They arrived at dawn and lodged at a guest house. The next morning, Joey went to town with three other boys to buy red and white candles, incense, and holy water.
+          </p>
+
+          <p class="step">
+            They had been instructed that for the rest of their stay in Kwahu Pepease, they were to stay away from <span class="forbidden">women</span>. The greatest sin any purified man can commit is touching or having sex with a <span class="forbidden">woman</span>, they were warned.
+          </p>
+        </section>
+
+        <!-- BEAT 9: Work / time zones -->
+        <section class="beat" data-beat="work">
+          <div class="label">Work</div>
+
+          <p class="step">
+            Equipped with the internet, spiritual cleansing, and basic needs, the fraud boys began their work. Due to time zone differences, they slept during the day and worked at night.
+          </p>
+
+          <p class="step">
+            Much of their job involved fabricating elaborate stories. Joey created two profiles: a white gay bartender and PhD student in Ohio, and a young widowed white <span class="forbidden">woman</span> in Alaska. He even purchased photos to match. During the 2020–2021 COVID lockdowns, a market emerged for complete scam profiles; photos, nudes, IDs, bank accounts.
+          </p>
+
+          <p class="step">
+            “You just needed to know where to look and have money to pay,” Joey says.
+          </p>
+
+          <p class="step">
+            With the support of Uche and collective knowledge-sharing, the work was relatively easy. The hard part was abstaining.
+          </p>
+
+          <p class="step">
+            “The hardest part of padlocking is the lack of sex and not touching <span class="forbidden">women</span>,” Joey says. “A lot of us were dying in that house, but we also had ways. It might be dirty to sleep with a <span class="forbidden">woman</span>, but they say nothing about boys or trans girls.”
+          </p>
+        </section>
+
+        <!-- BEAT 10: Scholarship + loopholes -->
+        <section class="beat" data-beat="loophole" id="loophole">
+          <div class="label">“We touch bros but we no gay”</div>
+
+          <p class="step">
+            Anthropologists and gender scholars have long studied homoeroticism among Ghanaian men. One of the central themes of Kwame Edwin Otu’s book <em>Amphibious Subjects</em>, for instance, discusses Sasso (a term for self-identified effeminate men) men who have sex and homoerotic relations with other men. Otu argues that these men’s sexual identities shift depending on context.
+          </p>
+
+          <p class="step">
+            Similarly, Godfried Asante in his ethnography also presents indigenous queer men identifying as both straight and gay at the same time and the contextually contingent negotiations men who sleep with men partake in their daily lives to negotiate the culture of silence on sexuality in Ghana.
+          </p>
+
+          <p class="step" id="loopholePara">
+            He describes how the young men coped—masturbating alone, or together, sometimes inviting trans <span class="forbidden">women</span>. “We touch bros but we no gay,” he insists.
+          </p>
+
+          <p class="step">
+            For my ex, padlocking introduced him to male intimacy and sex with trans <span class="forbidden">women</span>. As Joey told me, even though he had long suspected his attraction to gender-diverse people, Agona Swedru was not the place to act on this attraction.
+          </p>
+
+          <p class="step">
+            The others echoed similar sentiments—silent nods rather than words. It was brotherhood and convenience and it was done with the understanding that nobody would ever talk about it later.
+          </p>
+
+          <p class="step">
+            A code of secrecy protected this and as long as it was never acknowledged, it was not a problem. Self-intimacy, penetrative sex (with each other or trans people) and shared masturbation together were loopholes in the spiritual instruction to abstain from <span class="forbidden">women</span>. As long as they bathed with holy water blessed by their prophetess, they believed they were clean. This is how they lived, absolutely nothing gay.
+          </p>
+
+          <!-- mirrored moment -->
+          <div class="mirror" aria-label="Mirrored reading">
+            <div class="card">
+              <h3>What was forbidden</h3>
+              <p class="small">
+                A code of secrecy protected this and as long as it was never acknowledged, it was not a problem.
+                Self-intimacy, penetrative sex (with each other or trans people) and shared masturbation together were loopholes in the spiritual instruction to abstain from
+                <span class="hl forbidden">women</span>.
+              </p>
+            </div>
+            <div class="card">
+              <h3>What was permitted</h3>
+              <p class="small">
+                A code of secrecy protected this and as long as it was never acknowledged, it was not a problem.
+                Self-intimacy, penetrative sex (with each other or trans people) and shared masturbation together were
+                <span class="hl">loopholes</span>
+                in the spiritual instruction to abstain from
+                <span class="hl forbidden">women</span>.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- BEAT 11: Exit / residue -->
+        <section class="beat" data-beat="exit">
+          <div class="label">Exit</div>
+
+          <p class="step">
+            When we reconnected in 2025, Joey told me he had finally made his $200,000 and left the padlock house, making roughly $375,000 for Uche.
+          </p>
+
+          <p class="step">
+            “Uche was a good, kind and just man but the 65% cut he took from the boys was too much,” he says. “He had even raised it to 68%. It was a little too much and sometimes the boys complained.”
+          </p>
+
+          <p class="step">
+            As he spoke, I thought of the 27-year-old I first met in Agona Swedru, the boy who just wanted to finish school after his mother died. He now owns property in Dubai and Tamale, but he still speaks of Uche with a mix of respect and quiet resentment, remembering the long nights, the holy water baths, and the secrets they all agreed to carry.
+          </p>
+
+          <p class="step small">
+            *Names changed to protect identities
+          </p>
+        </section>
+
+      </div>
+    </main>
+
+    <footer>
+      <div class="credits">
+        <div class="hr"></div>
+        <p>
+          Edited/Reviewed by Samuel Banjoko, PK Cross, Caleb Okereke, Kenneth Awom, and Uzoma Ihejirika
+        </p>
+        <p>Illustrated by Rex Opara.</p>
+        <p class="small">
+          Prototype notes: This page intentionally avoids illustrative imagery. It uses layout/state changes to embody enclosure (“Padlock”), repetition (the code/mantra), and the loophole logic (term fading).
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Turn on background code after a moment (gives the title room to land)
+    window.addEventListener('load', () => {
+      document.body.classList.add('code-on');
+    });
+
+    // IntersectionObserver for paragraph “steps”
+    const steps = Array.from(document.querySelectorAll('.step'));
+    const stepObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) e.target.classList.add('in');
+      });
+    }, { threshold: 0.2 });
+    steps.forEach(p => stepObs.observe(p));
+
+    // Beat/state observer
+    const beats = Array.from(document.querySelectorAll('section.beat'));
+    let mantraHits = 0;
+
+    const beatObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+
+        const beat = e.target.getAttribute('data-beat');
+
+        // Toggle Padlock mode when padlock beat is active; remove after leaving padlock section range
+        if (beat === 'padlock') {
+          document.body.classList.add('padlock');
+        } else if (beat !== 'padlock') {
+          // remove padlock when we’re clearly past it (exit beat or later)
+          // but keep it on during rituals/joey/cleansing/work to sustain enclosure.
+          const padlockSustain = ['rituals','joey','cleansing','work'];
+          if (!padlockSustain.includes(beat)) {
+            document.body.classList.remove('padlock');
+          } else {
+            document.body.classList.add('padlock');
+          }
+        }
+
+        // Mantra appears at key beats
+        const mantraBeats = new Set(['padlock', 'cleansing', 'work', 'loophole']);
+        if (mantraBeats.has(beat)) {
+          document.body.classList.add('mantra-on');
+          mantraHits += 1;
+          degradeMantra(mantraHits);
+        } else {
+          document.body.classList.remove('mantra-on');
+        }
+
+        // Accumulation counter stages
+        if (beat === 'accumulation') animateAccumulation();
+
+      });
+    }, { threshold: 0.35 });
+
+    beats.forEach(s => beatObs.observe(s));
+
+    // Degrade mantra as we encounter key beats
+    function degradeMantra(hits){
+      const lines = Array.from(document.querySelectorAll('#mantra .line'));
+      // progressively add stronger degrade classes by adjusting opacity/clip already baked into CSS classes
+      // Here we also jitter slightly for “degradation”
+      lines.forEach((ln, i) => {
+        const n = Math.min(4, Math.max(1, i + Math.min(3, hits)));
+        // reset any inline transform first
+        ln.style.transform = '';
+        // small jitter
+        const j = (Math.random() * 2 - 1) * 1.2;
+        ln.style.transform = `translateY(${j}px) rotate(${(Math.random()*2-1)*1.2}deg)`;
+      });
+    }
+
+    // Accumulation counter
+    let accumRan = false;
+    function animateAccumulation(){
+      if (accumRan) return;
+      accumRan = true;
+
+      const valueEl = document.getElementById('accumValue');
+      const labelEl = document.getElementById('accumLabel');
+
+      const stages = [
+        { v: 1, label: 'first money' },
+        { v: 2, label: 'property' },
+        { v: 3, label: 'mobility' },
+        { v: 4, label: 'legitimacy' }
+      ];
+
+      let i = 0;
+      const tick = () => {
+        const s = stages[i];
+        valueEl.textContent = String(s.v);
+        labelEl.textContent = s.label;
+        i += 1;
+        if (i < stages.length) setTimeout(tick, 780);
+      };
+      tick();
+    }
+
+    // Optional: “typing” feel for the background code on first load
+    (function typeCode(){
+      const el = document.getElementById('codeText');
+      const full = el.textContent.trim();
+      el.textContent = '';
+      let idx = 0;
+      const speed = 34;
+
+      const step = () => {
+        idx += 1;
+        el.textContent = full.slice(0, idx);
+        if (idx < full.length) setTimeout(step, speed);
+      };
+      setTimeout(step, 220);
+    })();
+  </script>
+</body>
+</html>
