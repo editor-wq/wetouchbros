@@ -1,889 +1,1027 @@
 <!doctype html>
-<html lang="en" class="no-js">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>“We touch bros but we no gay” — The hidden intimacies of Ghana’s fraud boys</title>
-  <meta name="description" content="An interactive longform prototype: ritual, isolation, secrecy, and male intimacy inside Ghana’s fraud-boy padlock houses." />
-
-  <!-- Fonts (safe + pretty; still works if blocked) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@300;400;600&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="A cinematic scroll story: I was the only boy in the pageant. My mother let me go onstage — by Samson Felix." />
+  <title>I was the only boy in the pageant. My mother let me go onstage</title>
 
   <style>
     :root{
-      --bg: #070B12;
-      --panel: rgba(255,255,255,.06);
-      --panel2: rgba(255,255,255,.08);
-      --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.68);
-      --faint: rgba(255,255,255,.52);
-      --line: rgba(255,255,255,.14);
-
-      --accent: #7CFFB2;   /* mint */
-      --accent2:#8AA8FF;   /* periwinkle */
-      --warn: #FFB86B;     /* warm amber */
-      --danger:#FF5C7A;    /* pink-red */
-
-      --shadow: 0 20px 70px rgba(0,0,0,.55);
+      --bg:#07070a;
+      --ink:#f4f1ea;
+      --muted: rgba(244,241,234,.72);
+      --muted2: rgba(244,241,234,.55);
+      --edge: rgba(244,241,234,.14);
+      --glass: rgba(10,10,14,.58);
+      --glass2: rgba(10,10,14,.38);
+      --accent:#ff4d8d;
+      --accent2:#7bf3ff;
+      --accent3:#ffd46a;
+      --max: 880px;
       --radius: 18px;
-      --radius2: 28px;
-
-      --serif: "Spectral", ui-serif, Georgia, serif;
-      --sans: "Inter", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-
-      --max: 980px;
+      --shadow: 0 18px 55px rgba(0,0,0,.55);
+      --shadow2: 0 8px 25px rgba(0,0,0,.45);
+      --ease: cubic-bezier(.22,.9,.24,1);
     }
 
-    *{ box-sizing: border-box; }
-    html,body{ height:100%; }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
     body{
       margin:0;
-      background:
-        radial-gradient(1200px 800px at 15% 5%, rgba(124,255,178,.18), transparent 60%),
-        radial-gradient(900px 700px at 90% 20%, rgba(138,168,255,.20), transparent 55%),
-        radial-gradient(1000px 900px at 50% 100%, rgba(255,92,122,.10), transparent 55%),
-        var(--bg);
-      color:var(--text);
-      font-family: var(--sans);
-      line-height:1.65;
+      background: radial-gradient(1000px 600px at 20% -10%, rgba(255,77,141,.15), transparent 55%),
+                  radial-gradient(900px 500px at 80% 10%, rgba(123,243,255,.10), transparent 55%),
+                  radial-gradient(1000px 600px at 50% 120%, rgba(255,212,106,.08), transparent 55%),
+                  var(--bg);
+      color: var(--ink);
+      font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
+      line-height: 1.6;
       overflow-x:hidden;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
     }
 
-    a{ color: var(--accent2); text-decoration: none; }
-    a:hover{ text-decoration: underline; }
-
-    /* Layout */
-    .wrap{
-      width: min(var(--max), calc(100% - 48px));
-      margin: 0 auto;
+    a{ color:inherit; }
+    .sr-only{
+      position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+      overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
     }
 
-    /* Subtle film grain */
-    .grain{
-      pointer-events:none;
-      position:fixed; inset:0;
-      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.22'/%3E%3C/svg%3E");
-      mix-blend-mode: overlay;
-      opacity:.10;
-    }
-
-    /* Hero */
-    header.hero{
-      position: relative;
-      min-height: 92vh;
-      display:flex;
-      align-items:flex-end;
-      padding: 72px 0 56px;
-    }
-    .heroCard{
+    /* Top progress bar */
+    .progress {
+      position: fixed;
+      top:0; left:0;
       width:100%;
-      border: 1px solid var(--line);
-      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
-      border-radius: var(--radius2);
-      box-shadow: var(--shadow);
-      padding: 34px 28px 26px;
-      overflow:hidden;
-      position: relative;
-    }
-    .heroCard::before{
-      content:"";
-      position:absolute; inset:-2px;
-      background:
-        radial-gradient(700px 260px at 20% 10%, rgba(124,255,178,.20), transparent 60%),
-        radial-gradient(600px 280px at 82% 20%, rgba(138,168,255,.24), transparent 60%),
-        radial-gradient(800px 360px at 55% 95%, rgba(255,92,122,.12), transparent 60%);
-      filter: blur(10px);
-      opacity:.9;
-      z-index:0;
-    }
-    .heroInner{ position:relative; z-index:1; }
-
-    .kicker{
-      display:inline-flex;
-      gap:10px;
-      align-items:center;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(0,0,0,.22);
-      border: 1px solid rgba(255,255,255,.16);
-      color: var(--muted);
-      font-size: 12.5px;
-      letter-spacing:.06em;
-      text-transform: uppercase;
+      height: 3px;
+      z-index: 9999;
+      background: rgba(244,241,234,.06);
       backdrop-filter: blur(10px);
     }
-    .dot{
-      width:8px;height:8px;border-radius:50%;
-      background: var(--accent);
-      box-shadow: 0 0 0 6px rgba(124,255,178,.10);
+    .progress > i{
+      display:block;
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+      box-shadow: 0 0 18px rgba(255,77,141,.35);
+      transform-origin: 0 50%;
+    }
+
+    /* Ambient grain */
+    .grain{
+      position:fixed; inset:-50%;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.32'/%3E%3C/svg%3E");
+      mix-blend-mode: overlay;
+      opacity:.12;
+      pointer-events:none;
+      z-index: 2;
+      animation: grainMove 7s steps(6) infinite;
+    }
+    @keyframes grainMove{
+      0%{ transform: translate3d(-2%, -2%,0) rotate(0deg); }
+      25%{ transform: translate3d(2%, -3%,0) rotate(1deg); }
+      50%{ transform: translate3d(3%, 2%,0) rotate(0deg); }
+      75%{ transform: translate3d(-3%, 3%,0) rotate(-1deg); }
+      100%{ transform: translate3d(-2%, -2%,0) rotate(0deg); }
+    }
+
+    /* Floating “spotlight” */
+    .spotlight{
+      position: fixed;
+      inset: -30% -30%;
+      background: radial-gradient(700px 700px at var(--mx,50%) var(--my,30%),
+        rgba(255,77,141,.10),
+        rgba(123,243,255,.06) 35%,
+        transparent 62%);
+      pointer-events:none;
+      z-index: 1;
+      transition: opacity .3s var(--ease);
+      opacity:.9;
+    }
+
+    /* HERO */
+    header.hero{
+      position: relative;
+      min-height: 100vh;
+      display: grid;
+      align-items: end;
+      padding: 0 18px 40px;
+      isolation: isolate;
+    }
+
+    .heroMedia{
+      position:absolute;
+      inset:0;
+      z-index:-2;
+      overflow:hidden;
+    }
+    .heroMedia::before{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        linear-gradient(180deg, rgba(7,7,10,.12), rgba(7,7,10,.84) 70%, rgba(7,7,10,1)),
+        radial-gradient(900px 600px at 20% 20%, rgba(255,77,141,.14), transparent 55%),
+        radial-gradient(900px 600px at 80% 10%, rgba(123,243,255,.10), transparent 55%);
+      z-index:1;
+    }
+    .heroMedia img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      transform: scale(1.06);
+      filter: contrast(1.05) saturate(1.02);
+      will-change: transform;
+    }
+
+    .heroCard{
+      width: min(var(--max), 100%);
+      margin: 0 auto;
+      padding: 18px 18px 22px;
+      border: 1px solid var(--edge);
+      background: linear-gradient(180deg, rgba(10,10,14,.55), rgba(10,10,14,.32));
+      backdrop-filter: blur(14px);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow:hidden;
+    }
+    .heroCard::after{
+      content:"";
+      position:absolute; inset:0;
+      background: linear-gradient(120deg,
+        rgba(255,77,141,.10),
+        transparent 35%,
+        rgba(123,243,255,.08) 70%,
+        transparent);
+      opacity:.9;
+      transform: translateX(-22%);
+      animation: sheen 10s var(--ease) infinite;
+      pointer-events:none;
+    }
+    @keyframes sheen{
+      0%{ transform: translateX(-30%); opacity:.35;}
+      40%{ opacity:.75;}
+      70%{ transform: translateX(25%); opacity:.35;}
+      100%{ transform: translateX(-30%); opacity:.35;}
+    }
+
+    .kicker{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      font-size: 12px;
+      color: rgba(244,241,234,.72);
+      margin: 0 0 10px;
+      position: relative;
+      z-index:1;
+    }
+    .kicker .dot{
+      width:7px; height:7px; border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 18px rgba(255,77,141,.35);
     }
 
     h1{
-      font-family: var(--serif);
+      margin: 0 0 12px;
       font-weight: 600;
-      letter-spacing: -0.02em;
+      font-size: clamp(34px, 4.4vw, 62px);
       line-height: 1.05;
-      margin: 14px 0 14px;
-      font-size: clamp(34px, 4.4vw, 64px);
+      letter-spacing: -0.02em;
+      position: relative;
+      z-index:1;
     }
+    .typewriter{
+      display:inline;
+      border-right: 2px solid rgba(244,241,234,.55);
+      padding-right: 2px;
+      animation: caret 1.1s steps(1) infinite;
+    }
+    @keyframes caret{
+      0%, 49% { border-right-color: rgba(244,241,234,.55); }
+      50%, 100% { border-right-color: transparent; }
+    }
+
     .dek{
-      max-width: 78ch;
-      font-size: 18px;
-      color: var(--muted);
-      margin: 0 0 18px;
-      font-family: var(--sans);
+      margin: 0 0 12px;
+      color: rgba(244,241,234,.84);
+      font-size: clamp(16px, 1.55vw, 19px);
+      font-style: italic;
+      position: relative;
+      z-index:1;
     }
 
     .metaRow{
       display:flex;
+      justify-content: space-between;
+      gap:16px;
+      align-items:flex-end;
       flex-wrap:wrap;
-      gap:10px;
-      align-items:center;
-      color: var(--faint);
-      font-size: 13.5px;
-      margin-top: 10px;
+      position: relative;
+      z-index:1;
     }
-    .pill{
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.18);
-      padding: 7px 10px;
-      border-radius: 999px;
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
-    }
-    .pill b{ color: rgba(255,255,255,.82); font-weight:600; }
-
-    .scrollHint{
-      margin-top: 18px;
-      display:flex;
-      gap:10px;
-      align-items:center;
-      color: var(--muted);
+    .byline{
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: rgba(244,241,234,.78);
       font-size: 14px;
     }
-    .mouse{
-      width: 26px; height: 40px;
-      border-radius: 22px;
-      border: 1px solid rgba(255,255,255,.22);
-      position: relative;
-      opacity:.9;
-    }
-    .mouse::after{
-      content:"";
-      position:absolute;
-      left:50%; top:9px;
-      width:4px;height:4px;
-      border-radius:50%;
-      background: rgba(255,255,255,.72);
-      transform: translateX(-50%);
-      animation: wheel 1.4s infinite ease-in-out;
-    }
-    @keyframes wheel{
-      0%{ opacity:.2; transform:translate(-50%,0); }
-      60%{ opacity:1; transform:translate(-50%,12px); }
-      100%{ opacity:.2; transform:translate(-50%,0); }
-    }
-
-    /* Section scaffolding */
-    main{ padding: 28px 0 80px; }
-    .section{
-      margin: 28px 0;
-    }
-    .storyGrid{
-      display:grid;
-      grid-template-columns: 1.25fr .75fr;
-      gap: 18px;
-      align-items:start;
-    }
-    @media (max-width: 900px){
-      .storyGrid{ grid-template-columns: 1fr; }
-    }
-
-    .card{
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.05);
-      border-radius: var(--radius);
-      box-shadow: 0 14px 46px rgba(0,0,0,.45);
-      overflow:hidden;
-    }
-    .cardHead{
-      padding: 14px 16px;
-      border-bottom: 1px solid rgba(255,255,255,.10);
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      background: rgba(0,0,0,.18);
-    }
-    .cardHead h3{
-      margin:0;
+    .byline b{ color: rgba(244,241,234,.92); font-weight: 650; }
+    .heroActions{
+      display:flex; gap:10px; align-items:center;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       font-size: 13px;
-      letter-spacing:.08em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,.75);
-      font-weight:700;
-    }
-    .cardBody{ padding: 16px; }
-
-    /* Story typography */
-    .prose{
-      font-family: var(--serif);
-      font-size: 18px;
-      color: rgba(255,255,255,.90);
-    }
-    .prose p{
-      margin: 0 0 16px;
-    }
-    .prose .subhead{
-      font-family: var(--sans);
-      font-size: 13px;
-      letter-spacing:.12em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,.70);
-      margin: 22px 0 10px;
-    }
-    .pull{
-      margin: 22px 0 22px;
-      padding: 16px 16px 16px 18px;
-      border-left: 3px solid var(--accent);
-      background: rgba(0,0,0,.22);
-      border-radius: 10px;
-      font-family: var(--sans);
-      color: rgba(255,255,255,.86);
-    }
-    .pull b{ color: rgba(255,255,255,.95); }
-
-    .hr{
-      height:1px;
-      background: rgba(255,255,255,.12);
-      margin: 22px 0;
-    }
-
-    /* Reveal animation (with robust fallback) */
-    .reveal{
-      opacity: 0;
-      transform: translateY(14px);
-      transition: opacity .8s ease, transform .8s ease;
-      will-change: opacity, transform;
-    }
-    .reveal.in{
-      opacity: 1;
-      transform: translateY(0);
-    }
-    /* Fallback: if JS doesn't run, don't hide content */
-    .no-js .reveal{
-      opacity: 1 !important;
-      transform: none !important;
-    }
-
-    /* Visualization styles */
-    .miniNote{
-      font-size: 13.5px;
-      color: var(--muted);
-      margin: 0;
-      line-height:1.45;
-    }
-    .legend{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      margin-top: 10px;
-      font-size: 12.5px;
-      color: var(--faint);
-    }
-    .swatch{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.16);
-    }
-    .swatch i{
-      width:10px;height:10px;border-radius:50%;
-      display:inline-block;
-      background: var(--accent);
-    }
-    .swatch .b{ background: var(--accent2); }
-    .swatch .c{ background: var(--warn); }
-    .swatch .d{ background: var(--danger); }
-
-    /* Flow diagram SVG container */
-    .svgWrap{
-      width: 100%;
-      border-radius: 14px;
-      overflow:hidden;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.22);
-    }
-    svg{ display:block; width:100%; height:auto; }
-
-    /* Identity card */
-    .idCard{
-      border: 1px solid rgba(255,255,255,.16);
-      border-radius: 16px;
-      background:
-        radial-gradient(600px 220px at 15% 0%, rgba(124,255,178,.14), transparent 60%),
-        radial-gradient(520px 240px at 85% 15%, rgba(138,168,255,.14), transparent 60%),
-        rgba(0,0,0,.24);
-      padding: 16px;
-      box-shadow: 0 18px 60px rgba(0,0,0,.42);
-      position: relative;
-      overflow:hidden;
-    }
-    .idTop{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:12px;
-      margin-bottom: 12px;
-    }
-    .idTitle{
-      font-size: 12px;
-      letter-spacing:.12em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,.70);
-      font-weight: 800;
+      color: rgba(244,241,234,.72);
     }
     .chip{
-      width: 44px; height: 34px;
-      border-radius: 10px;
-      background:
-        linear-gradient(135deg, rgba(255,255,255,.18), rgba(255,255,255,.06));
-      border: 1px solid rgba(255,255,255,.18);
-      position: relative;
-    }
-    .chip::after{
-      content:"";
-      position:absolute; inset:8px;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,.18);
-    }
-    .idGrid{
-      display:grid;
-      grid-template-columns: 76px 1fr;
-      gap: 12px;
-      align-items:center;
-    }
-    .photo{
-      width: 76px; height: 92px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.16);
-      background:
-        radial-gradient(120px 120px at 35% 25%, rgba(255,255,255,.18), transparent 70%),
-        rgba(0,0,0,.25);
-      position: relative;
-      overflow:hidden;
-    }
-    .photo::before{
-      content:"";
-      position:absolute; inset:-40%;
-      background: linear-gradient(120deg, transparent, rgba(255,255,255,.16), transparent);
-      transform: translateX(-40%) rotate(10deg);
-      animation: sheen 3.6s infinite ease-in-out;
-      opacity:.7;
-    }
-    @keyframes sheen{
-      0%{ transform: translateX(-60%) rotate(10deg); }
-      55%{ transform: translateX(120%) rotate(10deg); }
-      100%{ transform: translateX(120%) rotate(10deg); }
-    }
-    .idFields{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    .field{
-      padding: 10px 10px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
-    }
-    .field .k{
-      display:block;
-      font-size: 11px;
-      color: rgba(255,255,255,.62);
-      letter-spacing:.12em;
-      text-transform: uppercase;
-      margin-bottom: 2px;
-      font-weight: 800;
-    }
-    .field .v{
-      font-size: 13.5px;
-      color: rgba(255,255,255,.86);
-      font-family: var(--sans);
-      font-weight: 600;
-    }
-    .idFooter{
-      margin-top: 12px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      color: rgba(255,255,255,.64);
-      font-size: 12.5px;
-    }
-    .stamp{
-      padding: 7px 10px;
+      border:1px solid rgba(244,241,234,.16);
+      background: rgba(10,10,14,.35);
+      padding: 8px 10px;
       border-radius: 999px;
-      border: 1px dashed rgba(124,255,178,.45);
-      color: rgba(124,255,178,.95);
-      background: rgba(124,255,178,.08);
-      font-weight: 800;
-      letter-spacing:.08em;
-      text-transform: uppercase;
-      font-size: 11px;
+      cursor:pointer;
+      user-select:none;
+      transition: transform .25s var(--ease), border-color .25s var(--ease), background .25s var(--ease);
+    }
+    .chip:hover{ transform: translateY(-2px); border-color: rgba(244,241,234,.28); background: rgba(10,10,14,.44); }
+    .chip:active{ transform: translateY(0px) scale(.98); }
+
+    .scrollCue{
+      width: min(var(--max), 100%);
+      margin: 18px auto 0;
+      display:flex;
+      justify-content:center;
+      position: relative;
+      z-index:1;
+    }
+    .scrollCue button{
+      border: 1px solid rgba(244,241,234,.18);
+      background: rgba(10,10,14,.35);
+      color: rgba(244,241,234,.86);
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor:pointer;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      transition: transform .25s var(--ease), border-color .25s var(--ease);
+      display:flex; align-items:center; gap:8px;
+    }
+    .scrollCue button:hover{ transform: translateY(-2px); border-color: rgba(244,241,234,.34); }
+    .scrollCue .arrow{
+      width: 10px; height: 10px;
+      border-right: 2px solid rgba(244,241,234,.75);
+      border-bottom: 2px solid rgba(244,241,234,.75);
+      transform: rotate(45deg);
+      margin-top:-2px;
+      animation: bob 1.1s var(--ease) infinite;
+    }
+    @keyframes bob{
+      0%,100%{ transform: rotate(45deg) translateY(0); opacity:.9;}
+      50%{ transform: rotate(45deg) translateY(3px); opacity:.65;}
     }
 
-    /* Parallel activation meter */
-    .meter{
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.20);
-      border-radius: 16px;
-      padding: 14px;
-    }
-    .meterHead{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      margin-bottom: 10px;
-    }
-    .meterHead .title{
-      font-size: 12px;
-      letter-spacing:.12em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,.76);
-      font-weight: 800;
-    }
-    .meterHead .value{
-      font-family: var(--sans);
-      font-size: 12.5px;
-      color: rgba(255,255,255,.70);
-    }
-    .bar{
+    main{
       position: relative;
-      height: 14px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.08);
-      overflow:hidden;
-      border: 1px solid rgba(255,255,255,.10);
+      z-index: 3;
+      padding: 34px 18px 90px;
     }
-    .fill{
+
+    .wrap{
+      width: min(var(--max), 100%);
+      margin: 0 auto;
+    }
+
+    /* Scene/section cards */
+    .scene{
+      margin: 28px auto;
+      border: 1px solid rgba(244,241,234,.12);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(10,10,14,.52), rgba(10,10,14,.28));
+      box-shadow: var(--shadow2);
+      overflow:hidden;
+      position: relative;
+    }
+    .scene .inner{
+      padding: 22px 20px;
+    }
+
+    .dropcap p:first-child::first-letter{
+      float:left;
+      font-size: 60px;
+      line-height: .86;
+      margin: 8px 10px 0 0;
+      font-weight: 650;
+      color: rgba(244,241,234,.95);
+      text-shadow: 0 10px 28px rgba(0,0,0,.55);
+    }
+
+    p{
+      margin: 0 0 14px;
+      font-size: 18px;
+      color: rgba(244,241,234,.90);
+    }
+    .muted{ color: var(--muted); }
+
+    /* Cinematic pull quote */
+    .quoteBand{
+      position: relative;
+      padding: 36px 20px;
+      background:
+        radial-gradient(800px 380px at 20% 20%, rgba(255,77,141,.18), transparent 55%),
+        radial-gradient(800px 380px at 80% 40%, rgba(123,243,255,.12), transparent 55%),
+        rgba(10,10,14,.35);
+      border-top: 1px solid rgba(244,241,234,.12);
+      border-bottom: 1px solid rgba(244,241,234,.12);
+    }
+    blockquote{
+      margin:0;
+      font-size: clamp(22px, 2.35vw, 34px);
+      line-height: 1.18;
+      letter-spacing: -0.015em;
+      font-weight: 520;
+      color: rgba(244,241,234,.95);
+    }
+    blockquote .tag{
+      display:inline-block;
+      margin-top: 12px;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-size: 12px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(244,241,234,.70);
+    }
+
+    /* Full-bleed image section */
+    .fullBleed{
+      margin: 30px auto;
+      border-radius: var(--radius);
+      overflow:hidden;
+      border: 1px solid rgba(244,241,234,.12);
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+    .fullBleed img{
+      width:100%;
+      height: clamp(340px, 55vh, 680px);
+      object-fit: cover;
+      transform: scale(1.03);
+      will-change: transform;
+      filter: contrast(1.02) saturate(1.02);
+    }
+    .fullBleed .cap{
+      position:absolute;
+      left: 14px; right: 14px; bottom: 14px;
+      padding: 12px 12px;
+      border-radius: 14px;
+      background: rgba(10,10,14,.46);
+      border: 1px solid rgba(244,241,234,.16);
+      backdrop-filter: blur(12px);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: rgba(244,241,234,.82);
+      font-size: 13px;
+    }
+
+    /* Inline image cards */
+    figure{
+      margin: 18px 0 18px;
+      border-radius: var(--radius);
+      overflow:hidden;
+      border: 1px solid rgba(244,241,234,.12);
+      background: rgba(10,10,14,.28);
+    }
+    figure img{
+      width:100%;
+      height: auto;
+      display:block;
+      cursor: zoom-in;
+    }
+    figcaption{
+      padding: 10px 12px 12px;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-size: 13px;
+      color: rgba(244,241,234,.74);
+      border-top: 1px solid rgba(244,241,234,.10);
+    }
+
+    /* “Eight weekends” timeline */
+    .timeline{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      padding: 6px 0 2px;
+      margin: 10px 0 0;
+    }
+    .tick{
+      border:1px solid rgba(244,241,234,.12);
+      background: rgba(10,10,14,.28);
+      border-radius: 14px;
+      padding: 12px 12px;
+      display:flex;
+      gap: 12px;
+      align-items:center;
+      position: relative;
+      overflow:hidden;
+    }
+    .tick::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: linear-gradient(90deg, rgba(255,77,141,.10), transparent 35%, rgba(123,243,255,.08), transparent);
+      opacity:.5;
+      transform: translateX(-25%);
+      transition: transform .8s var(--ease), opacity .8s var(--ease);
+      pointer-events:none;
+    }
+    .tick.is-on::before{ transform: translateX(18%); opacity:.9; }
+    .tick b{
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-size: 12px;
+      letter-spacing:.14em;
+      text-transform: uppercase;
+      color: rgba(244,241,234,.76);
+      white-space:nowrap;
+    }
+    .tick span{
+      color: rgba(244,241,234,.88);
+      font-size: 16px;
+    }
+    .pulse{
+      width: 10px; height: 10px; border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 18px rgba(255,77,141,.35);
+      flex: 0 0 auto;
+      opacity:.9;
+    }
+
+    /* “Win” meter */
+    .meterWrap{
+      margin-top: 14px;
+      border:1px solid rgba(244,241,234,.12);
+      background: rgba(10,10,14,.24);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .meterTop{
+      display:flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 10px;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: rgba(244,241,234,.76);
+      font-size: 13px;
+    }
+    .meter{
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(244,241,234,.08);
+      overflow:hidden;
+      position: relative;
+    }
+    .meter > i{
+      display:block;
       height:100%;
       width: 0%;
       border-radius: 999px;
-      background: linear-gradient(90deg, rgba(124,255,178,.95), rgba(138,168,255,.95));
-      box-shadow: 0 0 24px rgba(124,255,178,.18);
-      transition: width 1.1s ease;
+      background: linear-gradient(90deg, rgba(255,77,141,.9), rgba(123,243,255,.85), rgba(255,212,106,.85));
+      box-shadow: 0 0 18px rgba(255,77,141,.25);
+      transition: width 1.2s var(--ease);
     }
-    .fill.warn{
-      background: linear-gradient(90deg, rgba(255,184,107,.95), rgba(255,92,122,.92));
-      box-shadow: 0 0 24px rgba(255,92,122,.16);
-    }
-    .meterGrid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-      margin-top: 12px;
-    }
-    .meter .label{
-      display:flex;
-      justify-content:space-between;
-      align-items:baseline;
-      gap:10px;
-      color: rgba(255,255,255,.72);
-      font-size: 13px;
-    }
-    .meter .label b{
-      color: rgba(255,255,255,.92);
-      font-weight: 700;
+    .meterHint{
+      margin-top: 10px;
+      font-size: 14px;
+      color: rgba(244,241,234,.72);
     }
 
-    /* Footer */
+    /* Footer note */
     footer{
-      padding: 26px 0 60px;
-      color: rgba(255,255,255,.55);
-      font-size: 13px;
+      padding: 26px 18px 46px;
+      border-top: 1px solid rgba(244,241,234,.10);
+      color: rgba(244,241,234,.68);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
-    .footCard{
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
-      border-radius: var(--radius);
-      padding: 16px;
+    footer .wrap{
+      display:flex; gap: 14px; justify-content: space-between; align-items: center; flex-wrap:wrap;
+    }
+    .smallBtn{
+      border:1px solid rgba(244,241,234,.16);
+      background: rgba(10,10,14,.28);
+      color: rgba(244,241,234,.82);
+      padding: 10px 12px;
+      border-radius: 999px;
+      cursor:pointer;
+      transition: transform .25s var(--ease), border-color .25s var(--ease);
+    }
+    .smallBtn:hover{ transform: translateY(-2px); border-color: rgba(244,241,234,.28); }
+
+    /* Scroll reveal */
+    .reveal{
+      opacity:0;
+      transform: translateY(18px);
+      transition: opacity .85s var(--ease), transform .85s var(--ease);
+      will-change: opacity, transform;
+    }
+    .reveal.in{
+      opacity:1;
+      transform: translateY(0px);
+    }
+    .reveal.fast{
+      transition-duration: .65s;
+    }
+
+    /* Lightbox */
+    .lightbox{
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,.72);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index: 10000;
+      padding: 20px;
+    }
+    .lightbox.on{ display:flex; }
+    .lightbox figure{
+      margin:0;
+      width: min(1100px, 100%);
+      border-radius: 18px;
+      overflow:hidden;
+      border: 1px solid rgba(244,241,234,.18);
+      box-shadow: 0 25px 85px rgba(0,0,0,.65);
+      background: rgba(10,10,14,.35);
+    }
+    .lightbox img{ cursor: zoom-out; }
+    .lightbox .close{
+      position:absolute;
+      top: 14px; right: 14px;
+      border:1px solid rgba(244,241,234,.18);
+      background: rgba(10,10,14,.45);
+      color: rgba(244,241,234,.86);
+      width: 40px; height: 40px;
+      border-radius: 999px;
+      cursor:pointer;
+      font-size: 18px;
+      display:grid; place-items:center;
+      backdrop-filter: blur(10px);
+    }
+
+    /* Confetti canvas */
+    canvas#confetti{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index: 9000;
+      display:none;
+    }
+    canvas#confetti.on{ display:block; }
+
+    /* Reduce motion */
+    @media (prefers-reduced-motion: reduce){
+      .grain, .heroCard::after, .scrollCue .arrow { animation: none !important; }
+      .reveal{ opacity:1 !important; transform:none !important; transition:none !important; }
+      .heroMedia img{ transform:none !important; }
+      .spotlight{ display:none; }
+    }
+
+    /* Small screens typography */
+    @media (max-width: 520px){
+      p{ font-size: 17px; }
+      .scene .inner{ padding: 18px 16px; }
+      .fullBleed .cap{ font-size: 12px; }
     }
   </style>
 </head>
 
 <body>
+  <div class="progress" aria-hidden="true"><i id="progBar"></i></div>
+  <div class="spotlight" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
 
-  <!-- HERO -->
-  <header class="hero">
-    <div class="wrap">
-      <div class="heroCard reveal">
-        <div class="heroInner">
-          <div class="kicker"><span class="dot"></span> Interactive Longform Prototype</div>
-          <h1>“We touch bros but we no gay”</h1>
-          <p class="dek">
-            Padlocked inside for months to work online scams, young men are forbidden to touch women as part of a cleansing ritual.
-            In the silence of isolation, they reach for each other — and sometimes for trans women — exploiting a loophole that stays behind closed doors.
-          </p>
+  <header class="hero" id="top">
+    <div class="heroMedia" aria-hidden="true">
+      <img id="heroImg" src="images/IMG_0506.jpeg" alt="" />
+    </div>
 
-          <div class="metaRow">
-            <span class="pill"><b>Format</b> Scroll narrative + visuals</span>
-            <span class="pill"><b>Theme</b> Ritual, secrecy, intimacy</span>
-            <span class="pill"><b>Prototype</b> HTML/CSS/JS only</span>
-          </div>
+    <div class="heroCard reveal in" style="transform:none; opacity:1;">
+      <p class="kicker">
+        <span class="dot"></span>
+        <span>Personal Essay</span>
+        <span class="dot" style="background: linear-gradient(90deg, var(--accent2), var(--accent3));"></span>
+        <span>Niger State, Nigeria</span>
+      </p>
 
-          <div class="scrollHint">
-            <span class="mouse" aria-hidden="true"></span>
-            <span>Scroll to enter the story.</span>
-          </div>
+      <h1 aria-label="I was the only boy in the pageant. My mother let me go onstage">
+        <span id="tw" class="typewriter"></span>
+      </h1>
+
+      <p class="dek">
+        Dek: At seven, I was chosen to compete alongside six girls in a school beauty pageant in Nigeria. I expected my mother to stop me. Instead, she opened her wardrobe and began getting me ready.
+      </p>
+
+      <div class="metaRow">
+        <div class="byline">By <b>Samson Felix</b></div>
+        <div class="heroActions">
+          <span class="chip" id="toggleCinematic" role="button" tabindex="0" aria-pressed="true">Cinematic: On</span>
+          <span class="chip" id="toggleFocus" role="button" tabindex="0" aria-pressed="true">Spotlight: On</span>
+          <span class="chip" id="jumpToStory" role="button" tabindex="0">Start reading</span>
         </div>
       </div>
     </div>
+
+    <div class="scrollCue">
+      <button id="scrollBtn" aria-label="Scroll to begin">
+        <span>Scroll</span>
+        <span class="arrow" aria-hidden="true"></span>
+      </button>
+    </div>
   </header>
 
-  <!-- MAIN -->
   <main>
+    <div class="wrap" id="storyStart" style="scroll-margin-top: 20px;"></div>
+
+    <!-- Scene 1 -->
+    <section class="scene reveal dropcap" data-scene>
+      <div class="inner">
+        <p>Before I told my mother, I rehearsed the moment in my head. I was seven years old, standing at the edge of something I didn’t yet have the language for. My class teacher, Miss Joy, had selected me to be the only boy alongside six girls, taking part in the school’s beauty pageant. What I couldn’t figure out was how to explain the part that mattered most, that to compete, I would have to dress like a girl.</p>
+      </div>
+    </section>
+
+    <!-- Image 1 -->
     <div class="wrap">
-
-      <!-- Split: Story + Visuals -->
-      <section class="section storyGrid">
-
-        <!-- STORY COLUMN -->
-        <article class="card reveal">
-          <div class="cardHead">
-            <h3>Story</h3>
-            <span style="color:rgba(255,255,255,.58); font-size:12.5px;">Draft text rendered as longform</span>
-          </div>
-          <div class="cardBody prose">
-
-            <p><b>“We touch bros but we no gay”: The hidden intimacies of Ghana’s fraud boys</b></p>
-
-            <p class="pull">
-              <b>Summary:</b> Padlocked inside for months to work on online scams, young men are forbidden to touch women as part of a cleansing ritual.
-              In the silence of that isolation, they reach for each other — and sometimes for trans women — exploiting a loophole that stays behind closed doors.
-            </p>
-
-            <p>Uche Kamal* built his first fortune by inventing an orphanage that didn’t exist. At twenty, with nothing but a borrowed computer in a dingy Accra internet café, he wrote to a Christian charity in the UK, spinning a story of abandoned children and desperate need. They sent $700 and he pocketed every cedi.</p>
-
-            <p>But, as he tells me now at 32, his path into the world of fraud began much earlier, at seventeen, when he left a quiet village in Umuaru, Imo State, for Ghana. His father had just died, and life at home had grown unbearably hard for his mother and seven younger siblings, meaning school was no longer an option. So when an uncle offered him a place in Abbossey Okai, a bustling spare-parts district in Accra, to learn the trade and earn something, he agreed.</p>
-
-            <p>In Ghana, he shared a room with eight other people in a slum near the Accra Cocoa Marketing Board station. He hated every part of it, he told me, sucking his teeth and dabbing at the sweat on his face with a handkerchief. He was the youngest in the stifling room and was constantly sent on errands by the older men, even when he was exhausted from sleeping on the floor.</p>
-
-            <p>One of the senior boys from Lagos took a liking to him for his obedience and became his first mentor. At 20, he taught him how to smoke and began taking him along on his daily rounds, which often involved working out of local internet cafés in Accra. It was there Uche was introduced to the budding criminal underworld of penpal culture and Yahoo Mail chatrooms, which cybercriminals used to meet clients.</p>
-
-            <p>Shortly after was when he made his first money — a $700 fortune from the UK Christian charity. He reinvested that money into more successful scams, selling fictitious land and gold to men in Australia and the U.S.</p>
-
-            <p>Now, Uche considers himself successful. He owns three houses — two in Accra and one in Tamale — and a string of restaurants generating legitimate income. He has four personal cars and more than eleven tricycles operating for him just in northern Ghana.</p>
-
-            <div class="hr"></div>
-            <div class="subhead">Meeting Uche Kamal</div>
-
-            <p>Though he was born in Nigeria, Uche identifies as Ghanaian. He showed me his Ghana card and mentioned that he spoke fluent Twi and Ga. After his father’s death, continuing education in Nigeria became impossible, so moving to Ghana seemed the only logical step.</p>
-
-            <p class="pull"><b>“African men also deserve a shot at life, to be rich and have access to cars and houses like white men and celebrities did,”</b> Uche says. <b>“We are intelligent people when we are given chances.”</b></p>
-
-            <p>Indeed true to his philosophy, Uche has dedicated some of his properties in Accra and Tamale to mentoring young men eager to succeed. They live rent-free, eat for free, and have access to high-speed internet — all tools to help them concentrate on making money. Frustrated by recent poor internet service, he is even considering purchasing a private internet service provider (ISP).</p>
-
-            <p>I visited one of Uche’s houses one midnight in July, accompanied by my ex-boyfriend, who first introduced us. The house, known among the boys as “Padlock,” was an unassuming building with two bedrooms, a large hall, a kitchen downstairs, and at least three more rooms upstairs. In their world, “Padlock” refers to long periods (usually months) of working in a house that the fraud boys never leave. It means total immersion in the work of scamming and is designed to eliminate any external distractions.</p>
-
-            <p>The house was what I can only describe as a sanctified scammer sanctuary where contact with the outside world, especially with women, was absolutely discouraged. The boys entered the house and did not come out for months, yet the dedication and discipline I saw on their faces shocked me. I counted eleven young men inside the house — five of whom I spoke to. All were Ghanaians. The eldest, 27-year-old Joey* from Agona Swedru, had been padlocked for three years.</p>
-
-            <div class="hr"></div>
-            <div class="subhead">Rituals, luck, and brotherhood</div>
-
-            <p>When I asked Uche if his brothers had to perform rituals before padlocking, he laughed and admitted they did, but declined to elaborate.</p>
-
-            <p>I reconnected with Joey in March 2025 after matching on Tinder in February. After a brief romantic encounter, I asked to interview him about Uche and the padlock system.</p>
-
-            <p>On a Saturday night, at 8pm, they travelled in a hired bus to Kwahu Pepease in Ghana’s eastern region. They arrived at dawn and lodged at a guest house. The next morning, Joey went to town with three other boys to buy red and white candles, incense, and holy water.</p>
-
-            <p>They had been instructed that for the rest of their stay in Kwahu Pepease, they were to stay away from women. The greatest sin any purified man can commit is touching or having sex with a woman, they were warned.</p>
-
-            <div class="hr"></div>
-            <div class="subhead">“We touch bros but we no gay”</div>
-
-            <p>Equipped with the internet, spiritual cleansing, and basic needs, the fraud boys began their work. Due to time zone differences, they slept during the day and worked at night.</p>
-
-            <p>Much of their job involved fabricating elaborate stories. Joey created two profiles: a white gay bartender and PhD student in Ohio, and a young widowed white woman in Alaska. He even purchased photos to match. During the 2020–2021 COVID lockdowns, a market emerged for complete scam profiles; photos, nudes, IDs, bank accounts.</p>
-
-            <p><b>“You just needed to know where to look and have money to pay,”</b> Joey says.</p>
-
-            <p>With the support of Uche and collective knowledge-sharing, the work was relatively easy. The hard part was abstaining.</p>
-
-            <p class="pull"><b>“The hardest part of padlocking is the lack of sex and not touching women,”</b> Joey says. <b>“A lot of us were dying in that house, but we also had ways. It might be dirty to sleep with a woman, but they say nothing about boys or trans girls.”</b></p>
-
-            <p>He describes how the young men coped — masturbating alone, or together, sometimes inviting trans women. <b>“We touch bros but we no gay,”</b> he insists.</p>
-
-            <p>A code of secrecy protected this and as long as it was never acknowledged, it was not a problem. Self-intimacy, penetrative sex (with each other or trans people) and shared masturbation together were loopholes in the spiritual instruction to abstain from women.</p>
-
-            <p>When we reconnected in 2025, Joey told me he had finally made his $200,000 and left the padlock house, making roughly $375,000 for Uche.</p>
-
-            <p class="pull"><b>“Uche was a good, kind and just man but the 65% cut he took from the boys was too much,”</b> he says. <b>“He had even raised it to 68%.”</b></p>
-
-            <p>As he spoke, I thought of the 27-year-old I first met in Agona Swedru, the boy who just wanted to finish school after his mother died. He now owns property in Dubai and Tamale, but he still speaks of Uche with a mix of respect and quiet resentment, remembering the long nights, the holy water baths, and the secrets they all agreed to carry.</p>
-
-            <p style="color:rgba(255,255,255,.70); font-family:var(--sans); font-size:14px; margin-top:20px;">
-              *Names changed to protect identities
-            </p>
-
-            <p style="color:rgba(255,255,255,.58); font-family:var(--sans); font-size:13.5px;">
-              Edited/Reviewed by Samuel Banjoko, PK Cross, Caleb Okereke, Kenneth Awom, and Uzoma Ihejirika<br/>
-              Illustrated by Rex Opara.
-            </p>
-
-          </div>
-        </article>
-
-        <!-- VISUALS COLUMN -->
-        <aside class="section">
-
-          <!-- FLOW DIAGRAM -->
-          <div class="card reveal">
-            <div class="cardHead">
-              <h3>Flow diagram</h3>
-              <span style="color:rgba(255,255,255,.58); font-size:12.5px;">Padlock system</span>
-            </div>
-            <div class="cardBody">
-              <p class="miniNote">A high-level map of the story’s mechanism: recruitment → cleansing → isolation → production → secrecy.</p>
-
-              <div class="legend" aria-hidden="true">
-                <span class="swatch"><i></i> Ritual/cleansing</span>
-                <span class="swatch"><i class="b"></i> Infrastructure</span>
-                <span class="swatch"><i class="c"></i> Output</span>
-                <span class="swatch"><i class="d"></i> Secrecy</span>
-              </div>
-
-              <div class="svgWrap" style="margin-top:12px;">
-                <svg viewBox="0 0 880 380" role="img" aria-label="Flow diagram of the padlock system">
-                  <defs>
-                    <filter id="s" x="-20%" y="-20%" width="140%" height="140%">
-                      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000" flood-opacity=".45"/>
-                    </filter>
-                    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0" stop-color="rgba(138,168,255,.95)"/>
-                      <stop offset="1" stop-color="rgba(124,255,178,.95)"/>
-                    </linearGradient>
-                    <linearGradient id="g2" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0" stop-color="rgba(255,184,107,.95)"/>
-                      <stop offset="1" stop-color="rgba(255,92,122,.92)"/>
-                    </linearGradient>
-                  </defs>
-
-                  <!-- Nodes -->
-                  <g filter="url(#s)" font-family="Inter, system-ui" fill="white">
-                    <!-- Recruitment -->
-                    <rect x="30" y="46" rx="16" ry="16" width="240" height="72" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.18)"/>
-                    <text x="52" y="78" font-weight="700" font-size="14" fill="rgba(255,255,255,.92)">Recruitment / mentorship</text>
-                    <text x="52" y="100" font-size="12" fill="rgba(255,255,255,.68)">Older boys, cafés, introductions</text>
-
-                    <!-- Infrastructure -->
-                    <rect x="320" y="46" rx="16" ry="16" width="240" height="72" fill="rgba(138,168,255,.13)" stroke="rgba(138,168,255,.45)"/>
-                    <text x="342" y="78" font-weight="700" font-size="14" fill="rgba(255,255,255,.92)">House + internet</text>
-                    <text x="342" y="100" font-size="12" fill="rgba(255,255,255,.68)">Rent-free food, laptops, bandwidth</text>
-
-                    <!-- Cleansing -->
-                    <rect x="610" y="46" rx="16" ry="16" width="240" height="72" fill="rgba(124,255,178,.12)" stroke="rgba(124,255,178,.45)"/>
-                    <text x="632" y="78" font-weight="700" font-size="14" fill="rgba(255,255,255,.92)">Cleansing ritual</text>
-                    <text x="632" y="100" font-size="12" fill="rgba(255,255,255,.68)">Candles, holy water, abstinence</text>
-
-                    <!-- Padlock -->
-                    <rect x="70" y="170" rx="16" ry="16" width="300" height="84" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.18)"/>
-                    <text x="92" y="205" font-weight="800" font-size="14" fill="url(#g1)">“Padlock” isolation</text>
-                    <text x="92" y="229" font-size="12" fill="rgba(255,255,255,.68)">No leaving for months; women discouraged</text>
-
-                    <!-- Production -->
-                    <rect x="430" y="170" rx="16" ry="16" width="380" height="84" fill="rgba(255,184,107,.10)" stroke="rgba(255,184,107,.45)"/>
-                    <text x="452" y="205" font-weight="800" font-size="14" fill="rgba(255,255,255,.92)">Nightly production cycle</text>
-                    <text x="452" y="229" font-size="12" fill="rgba(255,255,255,.68)">Profiles, scripts, time zones, markets for IDs</text>
-
-                    <!-- Secrecy -->
-                    <rect x="140" y="292" rx="16" ry="16" width="600" height="64" fill="rgba(255,92,122,.10)" stroke="rgba(255,92,122,.45)"/>
-                    <text x="162" y="322" font-weight="800" font-size="14" fill="url(#g2)">Secrecy code + loophole intimacy</text>
-                    <text x="162" y="344" font-size="12" fill="rgba(255,255,255,.68)">“No women” rule → covert alternatives; nothing is said later</text>
-                  </g>
-
-                  <!-- Arrows -->
-                  <g stroke="rgba(255,255,255,.35)" stroke-width="2" fill="none" stroke-linecap="round">
-                    <path d="M270 82 L318 82" />
-                    <path d="M560 82 L608 82" />
-                    <path d="M760 118 C760 150, 300 150, 220 170" />
-                    <path d="M370 212 L430 212" />
-                    <path d="M620 254 C620 275, 560 290, 520 292" />
-                    <path d="M220 254 C240 275, 300 290, 360 292" />
-                    <path d="M620 254 C660 275, 700 286, 720 292" />
-                  </g>
-
-                  <g fill="rgba(255,255,255,.35)">
-                    <circle cx="318" cy="82" r="3"/>
-                    <circle cx="608" cy="82" r="3"/>
-                    <circle cx="430" cy="212" r="3"/>
-                  </g>
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <!-- IDENTITY CARD -->
-          <div class="card reveal" style="margin-top:18px;">
-            <div class="cardHead">
-              <h3>Identity card</h3>
-              <span style="color:rgba(255,255,255,.58); font-size:12.5px;">“I’m Ghanaian.”</span>
-            </div>
-            <div class="cardBody">
-              <p class="miniNote">A visual interpretation of the moment Uche “proves” belonging by showing a Ghana card.</p>
-
-              <div class="idCard" style="margin-top:12px;">
-                <div class="idTop">
-                  <div>
-                    <div class="idTitle">Ghana National ID (stylized)</div>
-                    <div style="color:rgba(255,255,255,.62); font-size:12.5px;">Prototype artifact • not a real ID</div>
-                  </div>
-                  <div class="chip" aria-hidden="true"></div>
-                </div>
-
-                <div class="idGrid">
-                  <div class="photo" aria-hidden="true"></div>
-                  <div class="idFields">
-                    <div class="field">
-                      <span class="k">Name</span>
-                      <span class="v">Uche Kamal*</span>
-                    </div>
-                    <div class="field">
-                      <span class="k">Status</span>
-                      <span class="v">Identifies as Ghanaian</span>
-                    </div>
-                    <div class="field">
-                      <span class="k">Languages</span>
-                      <span class="v">Twi • Ga</span>
-                    </div>
-                    <div class="field">
-                      <span class="k">Work</span>
-                      <span class="v">Mentor / “boss”</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="idFooter">
-                  <span style="color:rgba(255,255,255,.62);">“He showed me his Ghana card.”</span>
-                  <span class="stamp">Verified (Story)</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- PARALLEL ACTIVATION METER -->
-          <div class="card reveal" style="margin-top:18px;">
-            <div class="cardHead">
-              <h3>Parallel activation</h3>
-              <span style="color:rgba(255,255,255,.58); font-size:12.5px;">Tension meter</span>
-            </div>
-            <div class="cardBody">
-              <p class="miniNote">Two forces rise together: the stricter the abstinence rule, the more “loophole” intimacy becomes charged.</p>
-
-              <div class="meter" style="margin-top:12px;">
-                <div class="meterHead">
-                  <div class="title">Abstinence pressure</div>
-                  <div class="value" id="abVal">0%</div>
-                </div>
-                <div class="bar"><div class="fill" id="abFill"></div></div>
-
-                <div class="meterGrid">
-                  <div>
-                    <div class="meterHead" style="margin-top:6px;">
-                      <div class="title">Loophole intimacy</div>
-                      <div class="value" id="loVal">0%</div>
-                    </div>
-                    <div class="bar"><div class="fill warn" id="loFill"></div></div>
-                  </div>
-                </div>
-
-                <div style="margin-top:12px; color:rgba(255,255,255,.62); font-size:13px; line-height:1.45;">
-                  <div class="label"><span><b>Rule stated:</b> “Don’t touch women.”</span><span>→</span></div>
-                  <div class="label"><span><b>Rule exploited:</b> “They say nothing about boys or trans girls.”</span><span>→</span></div>
-                  <div class="label"><span><b>Rule enforced:</b> secrecy — “nobody talks later.”</span><span>✓</span></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </aside>
-      </section>
-
-      <footer class="reveal">
-        <div class="footCard">
-          <div style="font-family:var(--sans); letter-spacing:.12em; text-transform:uppercase; font-weight:800; color:rgba(255,255,255,.70); font-size:12px; margin-bottom:8px;">
-            Prototype note
-          </div>
-          <div style="color:rgba(255,255,255,.60); font-size:13.5px; line-height:1.55;">
-            This is a front-end only prototype (no build tools). It’s designed to paste into GitHub Pages as a single <b>index.html</b>.
-            The reveal-on-scroll has a built-in fallback so the story never disappears if JS fails.
-          </div>
-        </div>
-      </footer>
-
+      <figure class="reveal" data-zoom>
+        <img src="images/IMG_0507.jpeg" alt="Portrait-style image for the essay." />
+        <figcaption>He was seven. The news felt too large for his mouth—so he rehearsed it first.</figcaption>
+      </figure>
     </div>
+
+    <!-- Scene 2 -->
+    <section class="scene reveal" data-scene>
+      <div class="inner">
+        <p>In the close-knit neighborhood in Niger State, Nigeria where I grew up, my softness rarely felt like a problem. I slipped into my sister’s clothes, traced my face with makeup, and moved through the compound with an ease that came from familiarity. Home, in that sense, was safe. I could not entirely say the same for the missionary school I attended though. There, I was suddenly singular, the only effeminate boy in my class, and perhaps what might have been in the entire school. My name “Samson” disappeared quickly and in its place came nicknames that were repeated so often, they almost lost their derogatory intent, “boy girl,” “woman wrapper,” among others.</p>
+      </div>
+    </section>
+
+    <!-- Quote band -->
+    <section class="quoteBand reveal fast" data-scene>
+      <div class="wrap">
+        <blockquote>“It was not rejection from her that I feared. It was what her acceptance would mean.”</blockquote>
+        <span class="tag">The risk of being seen</span>
+      </div>
+    </section>
+
+    <!-- Scene 3 -->
+    <section class="scene reveal" data-scene>
+      <div class="inner">
+        <p>So when I stood before my mother on that afternoon after having been selected as the only boy in the pageant, it was not rejection from her that I feared. It was what her acceptance would mean, that suddenly I would have to stand before the whole school, that they would have to witness the acceptance my “home” had always shown me on the big stage. I feared what might happen if that safety were unsealed, packaged, and handed to the world. How would the world respond to witnessing a love it had not quite learned to give me?</p>
+        <p>In spite of my trembling as I broke the news to her, my mother, Suzy Benz, said yes of course. She was excited and she didn’t flinch. Instead, her eyes sparkled with so much joy, all the encouragement I needed. I started dancing in the parlour, and she let me. “Make sure you win o. You have to win,” she said.</p>
+      </div>
+    </section>
+
+    <!-- Full bleed (cinematic pause) -->
+    <section class="fullBleed reveal" data-parallax data-scene>
+      <img src="images/IMG_0511.jpeg" alt="Full-bleed image for a cinematic break in the essay." />
+      <div class="cap">A yes that lands like shelter. A yes that also opens the door to the world.</div>
+    </section>
+
+    <!-- Scene 4 + timeline -->
+    <section class="scene reveal" data-scene>
+      <div class="inner">
+        <p>For the eight weekends leading up to the contest, my mother and I rehearsed. Each Saturday, she pulled a different wrapper and blouse from her wardrobe. They hung loosely on my small, seven-year-old frame, but I wore them anyway, and she let me. I was proud, proud of how I looked, prouder still that she was the one teaching me. My pride came, in part, from how much I felt like her in those clothes. On those weekends, I became Suzy Benz, with a blouse and wrapper to prove it, no one could tell me otherwise. And there was nothing I wanted more than to be my mother, Suzy Benz. It didn’t matter that some neighbors who were my friends disapproved, or that a few teachers insisted the contest was inappropriate. My mother believed in me and so did my father, even from afar, away for work but unmistakably on my side.</p>
+
+        <div class="timeline" id="weekends">
+          <div class="tick reveal fast"><span class="pulse"></span><b>Weekend 1</b><span>Practice: posture, pace, breath.</span></div>
+          <div class="tick reveal fast"><span class="pulse"></span><b>Weekend 2</b><span>Wrappers hung loose. Confidence didn’t.</span></div>
+          <div class="tick reveal fast"><span class="pulse"></span><b>Weekend 3</b><span>Makeup, mirror, correction—gentle.</span></div>
+          <div class="tick reveal fast"><span class="pulse"></span><b>Weekend 4</b><span>Walk again. Walk again. Walk again.</span></div>
+          <div class="tick reveal fast"><span class="pulse"></span><b>Weekend 5</b><span>Neighbors disapprove. Home holds.</span></div>
+          <div class="tick reveal fast"><span class="pulse"></span><b>Weekend 6</b><span>Rehearsal at school: nerves, then ease.</span></div>
+          <div class="tick reveal fast"><span class="pulse"></span><b>Weekend 7</b><span>A name becomes a costume—worn proudly.</span></div>
+          <div class="tick reveal fast"><span class="pulse"></span><b>Weekend 8</b><span>Final run-through. The body remembers.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scene 5 -->
+    <section class="scene reveal" data-scene>
+      <div class="inner">
+        <p>I felt comfortable in my mother’s clothes, so comfortable that I knew I would wear them on the day of the pageant regardless of their size, as I did even during rehearsals at school. A night or two before the event, my mother called me into the living room and handed me a bag, and although she often bought us clothes for Christmas, I sensed immediately that this was something else.</p>
+        <p>Inside were a blouse, a wrapper, a headtie, and a pair of shoes, all made for me, measured to my small body in a way her clothes never had been. She had sewn me an outfit for the pageant that mirrored her own, only scaled down to fit me, and she had included the same brown powder she used on her face, and every accessory I would need. I began to cry as soon as I understood what she had done and embraced her so tightly. Here was a woman who had gone to the market, bought the materials, and had her tailor sew the entire attire for me without my knowledge. A pink lace, with a navy blue George – an Igbo traditional material– and a gele paired with gold accessories. I would be stunning and I knew it.</p>
+      </div>
+    </section>
+
+    <!-- Image 2 (quiet mid-story) -->
+    <div class="wrap">
+      <figure class="reveal" data-zoom>
+        <img src="images/IMG_0512.jpeg" alt="Image used as a quiet pause in the story." />
+        <figcaption>Not borrowed. Not oversized. Measured—like permission made visible.</figcaption>
+      </figure>
+    </div>
+
+    <!-- Scene 6 -->
+    <section class="scene reveal" data-scene>
+      <div class="inner">
+        <p>And on the day of the pageant, here was myself, the only boy among six girls. I walked the field, dressed as an Oriaku, a true Igbo babe. My makeup was done exactly how my mother had taught me, my George and gele tied in the way we practised, and I walked down the field in the way she’d shown me. I was Suzy Benz’s son and it couldn’t have been clearer than that day. I felt a sense of pride and confidence that I’d never felt before and my mother — as though aware of this — cheered so loudly, the whole school turned to look.</p>
+        <p>She cheered when I in a bid to change hastily, walked out with my earrings stuck in my blouse, she cheered when that earring fell off, when it became the defining factor among the judges about whether I should win or not. It spilled into an argument, how could my earring fall off? Did I even need one in the first place if I was a boy, another teacher argued in my defense.</p>
+      </div>
+    </section>
+
+    <!-- Win meter + confetti trigger -->
+    <section class="scene reveal" data-scene id="winScene">
+      <div class="inner">
+        <p>The judges brought it up too as they gave final remarks before announcing the winner. Then they announced me second place to a protest from the crowd. If my earrings hadn’t fallen, they said, then I would have won. This disagreement over the winner stretched on, back and forth, until the judges changed their minds. This time, they called my name.</p>
+
+        <div class="meterWrap">
+          <div class="meterTop">
+            <span>Moment: <b style="color:rgba(244,241,234,.92)">They call my name</b></span>
+            <span class="muted">Activation</span>
+          </div>
+          <div class="meter" aria-label="Activation meter"><i id="meterFill"></i></div>
+          <div class="meterHint muted">When this section enters view, the meter fills—and the page celebrates.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quote band 2 -->
+    <section class="quoteBand reveal" data-scene>
+      <div class="wrap">
+        <blockquote>“I won, I won, I won, as she wanted me to.”</blockquote>
+        <span class="tag">The crowd, the arms, the certainty</span>
+      </div>
+    </section>
+
+    <!-- Scene 7 -->
+    <section class="scene reveal" data-scene>
+      <div class="inner">
+        <p>I thought first of my mother, my Suzy Benz. I searched for her in the crowd and when I found her, I ran, pulling off my headpiece as I moved toward her, the noise of the crowd rising around me as I reached for her arms. I won, I won, I won, as she wanted me to. I was proud of myself, but more than anything else, I was proud that my mother was proud of me.</p>
+        <p>I am 27 now and I design clothes of my own, but when I think back, I return to that first evening, to the feeling of standing in front of my mother, unsure of how to begin. Time has passed and both of us have changed, but the posture of that moment has stayed with me, the way I learned that I could stand before her with whatever the world was about to ask of me, and that she would listen, smile, draw me close, and quietly begin to prepare me for what was coming. Even now, I know that if something slips or comes undone along the way, I will look up and find my Suzy Benz there.</p>
+      </div>
+    </section>
   </main>
 
+  <footer>
+    <div class="wrap">
+      <div>
+        <div style="font-weight:650; color: rgba(244,241,234,.86);">I was the only boy in the pageant. My mother let me go onstage</div>
+        <div class="muted">By Samson Felix</div>
+      </div>
+      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <button class="smallBtn" id="backTop">Back to top</button>
+        <button class="smallBtn" id="copyLink">Copy page link</button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
+    <button class="close" id="lbClose" aria-label="Close">✕</button>
+    <figure>
+      <img id="lbImg" src="" alt="" />
+      <figcaption id="lbCap"></figcaption>
+    </figure>
+  </div>
+
+  <!-- Confetti -->
+  <canvas id="confetti" width="1" height="1"></canvas>
+
   <script>
-    // Enable reveal animations only if JS is running
-    document.documentElement.classList.remove('no-js');
+    // ---- Typewriter title (cinematic intro) ----
+    const fullTitle = "I was the only boy in the pageant. My mother let me go onstage";
+    const tw = document.getElementById('tw');
+    let i = 0;
+    function typeTitle(){
+      if(!tw) return;
+      if (i <= fullTitle.length){
+        tw.textContent = fullTitle.slice(0, i);
+        i++;
+        requestAnimationFrame(() => setTimeout(typeTitle, i < 18 ? 40 : 18));
+      }
+    }
+    typeTitle();
 
-    // ---------- Reveal on scroll (robust, with fallback) ----------
+    // ---- Scroll controls ----
+    const scrollBtn = document.getElementById('scrollBtn');
+    const jumpToStory = document.getElementById('jumpToStory');
+    const storyStart = document.getElementById('storyStart');
+    function goStory(){
+      storyStart.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+    scrollBtn?.addEventListener('click', goStory);
+    jumpToStory?.addEventListener('click', goStory);
+    jumpToStory?.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') goStory(); });
+
+    // ---- Progress bar ----
+    const progBar = document.getElementById('progBar');
+    function updateProgress(){
+      const h = document.documentElement;
+      const sc = h.scrollTop || document.body.scrollTop;
+      const max = (h.scrollHeight - h.clientHeight) || 1;
+      const pct = Math.min(100, Math.max(0, (sc / max) * 100));
+      progBar.style.width = pct + '%';
+    }
+    window.addEventListener('scroll', updateProgress, {passive:true});
+    updateProgress();
+
+    // ---- Spotlight follows cursor ----
+    const spotlight = document.querySelector('.spotlight');
+    let spotlightOn = true;
+    document.addEventListener('pointermove', (e)=>{
+      if(!spotlightOn) return;
+      const x = (e.clientX / window.innerWidth) * 100;
+      const y = (e.clientY / window.innerHeight) * 100;
+      document.documentElement.style.setProperty('--mx', x + '%');
+      document.documentElement.style.setProperty('--my', y + '%');
+    }, {passive:true});
+
+    // ---- Parallax hero + full-bleed ----
+    const heroImg = document.getElementById('heroImg');
+    const parallaxEls = Array.from(document.querySelectorAll('[data-parallax] img'));
+    let cinematicOn = true;
+
+    function parallax(){
+      if(!cinematicOn) return;
+      const y = window.scrollY || 0;
+      if(heroImg){
+        heroImg.style.transform = `translateY(${y * 0.18}px) scale(1.06)`;
+      }
+      for(const img of parallaxEls){
+        const rect = img.getBoundingClientRect();
+        const mid = rect.top + rect.height/2;
+        const offset = (mid - window.innerHeight/2) * 0.06;
+        img.style.transform = `translateY(${offset}px) scale(1.03)`;
+      }
+    }
+    window.addEventListener('scroll', ()=>requestAnimationFrame(parallax), {passive:true});
+    parallax();
+
+    // ---- Scroll reveal ----
     const revealEls = Array.from(document.querySelectorAll('.reveal'));
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(ent=>{
+        if(ent.isIntersecting){
+          ent.target.classList.add('in');
+          // Weekend timeline “sheen”
+          if(ent.target.classList.contains('tick')) ent.target.classList.add('is-on');
+          io.unobserve(ent.target);
+        }
+      });
+    }, {threshold: 0.14});
+    revealEls.forEach(el=>io.observe(el));
 
-    // If IntersectionObserver isn't supported, show everything
-    if (!('IntersectionObserver' in window)) {
-      revealEls.forEach(el => el.classList.add('in'));
-    } else {
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('in');
-            io.unobserve(entry.target);
-          }
+    // ---- Lightbox for figures ----
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lbImg');
+    const lbCap = document.getElementById('lbCap');
+    const lbClose = document.getElementById('lbClose');
+
+    function openLB(imgEl){
+      lbImg.src = imgEl.src;
+      lbImg.alt = imgEl.alt || '';
+      const cap = imgEl.closest('figure')?.querySelector('figcaption')?.textContent || '';
+      lbCap.textContent = cap;
+      lb.classList.add('on');
+    }
+    function closeLB(){
+      lb.classList.remove('on');
+      lbImg.src = '';
+    }
+    document.querySelectorAll('[data-zoom] img').forEach(img=>{
+      img.addEventListener('click', ()=>openLB(img));
+    });
+    lbClose?.addEventListener('click', closeLB);
+    lb?.addEventListener('click', (e)=>{ if(e.target === lb) closeLB(); });
+    document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeLB(); });
+
+    // ---- Confetti + win meter ----
+    const winScene = document.getElementById('winScene');
+    const meterFill = document.getElementById('meterFill');
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas(){
+      canvas.width = window.innerWidth * devicePixelRatio;
+      canvas.height = window.innerHeight * devicePixelRatio;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function rand(min,max){ return Math.random()*(max-min)+min; }
+
+    let confetti = [];
+    let confettiOn = false;
+    function launchConfetti(){
+      if(!cinematicOn) return;
+      confettiOn = true;
+      canvas.classList.add('on');
+      confetti = [];
+      const count = Math.min(240, Math.floor(window.innerWidth * 0.22));
+      for(let i=0;i<count;i++){
+        confetti.push({
+          x: rand(0, window.innerWidth),
+          y: rand(-window.innerHeight, 0),
+          vx: rand(-1.8, 1.8),
+          vy: rand(2.2, 5.8),
+          r: rand(2, 4.5),
+          w: rand(6, 12),
+          h: rand(8, 16),
+          rot: rand(0, Math.PI*2),
+          vr: rand(-0.12, 0.12),
+          life: rand(70, 150),
+          hue: rand(0, 360)
         });
-      }, { threshold: 0.12 });
-
-      revealEls.forEach(el => io.observe(el));
+      }
+      requestAnimationFrame(tickConfetti);
+      setTimeout(()=>{ confettiOn = false; }, 1900);
+      setTimeout(()=>{ canvas.classList.remove('on'); ctx.clearRect(0,0,window.innerWidth, window.innerHeight); }, 2400);
     }
 
-    // ---------- Activation meter animation ----------
-    // Simple scroll-based mapping: as you scroll down the page, the meter fills.
-    const abFill = document.getElementById('abFill');
-    const loFill = document.getElementById('loFill');
-    const abVal  = document.getElementById('abVal');
-    const loVal  = document.getElementById('loVal');
+    function tickConfetti(){
+      if(!confettiOn) return;
+      ctx.clearRect(0,0,window.innerWidth, window.innerHeight);
+      for(const p of confetti){
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rot += p.vr;
+        p.vy += 0.03;
+        p.life -= 1;
 
-    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
-
-    function updateMeters(){
-      const doc = document.documentElement;
-      const scrollTop = doc.scrollTop || document.body.scrollTop;
-      const scrollHeight = doc.scrollHeight - doc.clientHeight;
-      const t = scrollHeight > 0 ? (scrollTop / scrollHeight) : 0;
-
-      // Give it a more narrative curve: pressure rises fast early; loophole rises later.
-      const abstinence = clamp(Math.round((Math.pow(t, 0.65)) * 100), 0, 100);
-      const loophole   = clamp(Math.round((Math.pow(Math.max(0, t - 0.18) / 0.82, 1.15)) * 100), 0, 100);
-
-      abFill.style.width = abstinence + '%';
-      loFill.style.width = loophole + '%';
-      abVal.textContent = abstinence + '%';
-      loVal.textContent = loophole + '%';
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.fillStyle = `hsla(${p.hue}, 85%, 65%, 0.85)`;
+        ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+        ctx.restore();
+      }
+      confetti = confetti.filter(p => p.life > 0 && p.y < window.innerHeight + 40);
+      requestAnimationFrame(tickConfetti);
     }
 
-    // Start + bind
-    updateMeters();
-    window.addEventListener('scroll', updateMeters, { passive: true });
-    window.addEventListener('resize', updateMeters);
+    let winTriggered = false;
+    const winObserver = new IntersectionObserver((entries)=>{
+      entries.forEach(ent=>{
+        if(ent.isIntersecting && !winTriggered){
+          winTriggered = true;
+          // fill meter + confetti
+          meterFill.style.width = '100%';
+          launchConfetti();
+        }
+      });
+    }, {threshold: 0.45});
+    winObserver.observe(winScene);
+
+    // ---- Toggles ----
+    const toggleCinematic = document.getElementById('toggleCinematic');
+    const toggleFocus = document.getElementById('toggleFocus');
+
+    function setCinematic(on){
+      cinematicOn = on;
+      toggleCinematic.setAttribute('aria-pressed', String(on));
+      toggleCinematic.textContent = `Cinematic: ${on ? 'On' : 'Off'}`;
+      if(!on){
+        // reset transforms safely
+        if(heroImg) heroImg.style.transform = 'scale(1.06)';
+        parallaxEls.forEach(img => img.style.transform = 'scale(1.03)');
+        canvas.classList.remove('on');
+      }else{
+        parallax();
+      }
+    }
+
+    function setSpotlight(on){
+      spotlightOn = on;
+      toggleFocus.setAttribute('aria-pressed', String(on));
+      toggleFocus.textContent = `Spotlight: ${on ? 'On' : 'Off'}`;
+      spotlight.style.opacity = on ? '.9' : '0';
+    }
+
+    toggleCinematic?.addEventListener('click', ()=> setCinematic(!cinematicOn));
+    toggleCinematic?.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') setCinematic(!cinematicOn); });
+    toggleFocus?.addEventListener('click', ()=> setSpotlight(!spotlightOn));
+    toggleFocus?.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') setSpotlight(!spotlightOn); });
+
+    // ---- Footer buttons ----
+    document.getElementById('backTop')?.addEventListener('click', ()=>{
+      document.getElementById('top').scrollIntoView({behavior:'smooth', block:'start'});
+    });
+
+    document.getElementById('copyLink')?.addEventListener('click', async ()=>{
+      try{
+        await navigator.clipboard.writeText(window.location.href);
+        const btn = document.getElementById('copyLink');
+        const old = btn.textContent;
+        btn.textContent = 'Copied';
+        setTimeout(()=>btn.textContent = old, 900);
+      }catch(e){
+        alert('Could not copy. Your browser may block clipboard access on file:// previews. Try after deploying on GitHub Pages.');
+      }
+    });
+
+    // ---- Respect reduced motion: default cinematic off if user prefers ----
+    if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      setCinematic(false);
+      setSpotlight(false);
+    }
   </script>
 </body>
 </html>
