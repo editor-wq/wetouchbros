@@ -2,625 +2,1117 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>“We touch bros but we no gay”: The hidden intimacies of Ghana’s fraud boys</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>“We touch bros but we no gay” — Prototype</title>
+  <meta name="description" content="Interactive longform prototype with hero, scroll reveals, and in-story visualizations." />
 
   <style>
     :root{
-      --bg: #0b0d12;
-      --panel: rgba(255,255,255,.06);
-      --text: rgba(255,255,255,.88);
-      --muted: rgba(255,255,255,.62);
-      --faint: rgba(255,255,255,.4);
+      --bg:#07070a;
+      --panel: rgba(255,255,255,.04);
+      --panel2: rgba(255,255,255,.06);
+      --stroke: rgba(255,255,255,.10);
+      --stroke2: rgba(255,255,255,.14);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.68);
+      --faint: rgba(255,255,255,.52);
+      --max: 860px;
+      --maxWide: 1100px;
+      --shadow: 0 18px 55px rgba(0,0,0,.55);
       --accent: #8ef3c5;
-      --accent2: #9aa7ff;
-      --line: rgba(255,255,255,.10);
-      --shadow: 0 20px 50px rgba(0,0,0,.45);
-      --radius: 18px;
-      --max: 68ch;
+      --accent2:#9aa7ff;
+      --danger:#ff6b6b;
+      --warn:#ffd166;
     }
 
     *{ box-sizing:border-box; }
-    html, body { height: 100%; }
-    body{
-      margin:0;
-      font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-      background: radial-gradient(1200px 700px at 20% 0%, rgba(154,167,255,.18), transparent 55%),
-                  radial-gradient(900px 600px at 85% 10%, rgba(142,243,197,.14), transparent 60%),
+    html, body{
+      margin:0; padding:0;
+      background: radial-gradient(1200px 700px at 20% 10%, rgba(154,167,255,.16), transparent 55%),
+                  radial-gradient(1000px 700px at 80% 0%, rgba(142,243,197,.12), transparent 60%),
                   var(--bg);
       color: var(--text);
-      overflow-x: hidden;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      scroll-behavior:smooth;
     }
 
-    /* subtle grain */
-    body::before{
-      content:"";
-      position: fixed;
-      inset:0;
-      pointer-events:none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.22'/%3E%3C/svg%3E");
-      mix-blend-mode: overlay;
-      opacity:.25;
-    }
+    a{ color: inherit; }
+    ::selection{ background: rgba(142,243,197,.22); }
 
-    /* progress bar */
-    .progress{
+    /* Top progress bar */
+    .topbar{
       position: fixed;
       top:0; left:0; right:0;
       height: 4px;
-      background: rgba(255,255,255,.08);
       z-index: 9999;
+      background: rgba(255,255,255,.06);
     }
-    .progress > i{
+    .topbar > i{
       display:block;
       height:100%;
       width:0%;
       background: linear-gradient(90deg, var(--accent), var(--accent2));
-      box-shadow: 0 0 18px rgba(142,243,197,.55);
+      box-shadow: 0 0 18px rgba(142,243,197,.25);
+      transition: width .08s linear;
     }
 
-    /* top nav */
-    header{
-      position: sticky;
-      top: 4px;
-      z-index: 50;
-      backdrop-filter: blur(12px);
-      background: linear-gradient(to bottom, rgba(11,13,18,.82), rgba(11,13,18,.35));
-      border-bottom: 1px solid var(--line);
-    }
+    /* Subtle nav */
     .nav{
-      max-width: min(1100px, 92vw);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      background: rgba(7,7,10,.55);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .nav-inner{
+      max-width: var(--maxWide);
       margin: 0 auto;
-      padding: 14px 0;
+      padding: 10px 16px;
       display:flex;
       align-items:center;
-      justify-content: space-between;
-      gap: 12px;
+      justify-content:space-between;
+      gap: 14px;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: rgba(255,255,255,.78);
+      font-size: 12px;
+      letter-spacing:.02em;
     }
-    .brand{
+    .nav a{
+      text-decoration:none;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      padding: 7px 10px;
+      border-radius: 999px;
+    }
+    .nav a:hover{ background: rgba(255,255,255,.07); }
+
+    /* Hero */
+    .hero{
+      min-height: calc(100vh - 52px);
       display:flex;
       flex-direction:column;
-      gap: 2px;
-      min-width: 220px;
+      justify-content:flex-end;
+      padding: 56px 18px 36px;
     }
-    .brand b{
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      letter-spacing: .2px;
-      font-size: 14px;
-      color: rgba(255,255,255,.9);
-    }
-    .brand span{
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .controls{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-    button, .pill{
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      font-size: 13px;
-      color: rgba(255,255,255,.86);
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.10);
-      padding: 10px 12px;
-      border-radius: 999px;
-      cursor:pointer;
-      transition: transform .12s ease, background .2s ease, border-color .2s ease;
-      user-select:none;
-    }
-    button:hover{
-      background: rgba(255,255,255,.12);
-      border-color: rgba(255,255,255,.18);
-      transform: translateY(-1px);
-    }
-    button:active{ transform: translateY(0px) scale(.99); }
-
-    .pill{
-      display:flex;
-      gap: 8px;
-      align-items:center;
-      cursor: default;
-    }
-    .dot{
-      width:8px; height:8px; border-radius:999px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      box-shadow: 0 0 14px rgba(154,167,255,.35);
-    }
-
-    /* layout */
-    main{
-      max-width: min(1100px, 92vw);
+    .hero-inner{
+      max-width: var(--maxWide);
       margin: 0 auto;
-      padding: 40px 0 90px;
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 26px;
-    }
-
-    .hero{
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 22px;
+      padding: 28px 22px 20px;
+      background:
+        radial-gradient(900px 420px at 10% 0%, rgba(154,167,255,.16), transparent 55%),
+        radial-gradient(800px 420px at 90% 10%, rgba(142,243,197,.10), transparent 60%),
+        rgba(255,255,255,.02);
       box-shadow: var(--shadow);
-      padding: 36px 26px 28px;
-      position: relative;
+      position:relative;
       overflow:hidden;
     }
-
-    .hero::after{
+    .hero-inner:before{
       content:"";
       position:absolute;
-      inset:-40% -20%;
-      background: radial-gradient(circle at 30% 30%, rgba(142,243,197,.18), transparent 40%),
-                  radial-gradient(circle at 70% 20%, rgba(154,167,255,.18), transparent 45%);
-      transform: rotate(9deg);
-      filter: blur(12px);
-      opacity:.8;
+      inset:-2px;
+      background: linear-gradient(120deg, rgba(142,243,197,.22), rgba(154,167,255,.14), transparent 60%);
+      filter: blur(30px);
+      opacity:.35;
       pointer-events:none;
     }
-
-    .hero > *{ position: relative; z-index: 2; }
-
-    h1{
-      margin: 0 0 10px;
-      font-size: clamp(28px, 3.2vw, 46px);
-      line-height: 1.12;
-      letter-spacing: -.02em;
+    .hero h1{
+      position:relative;
+      margin:0 0 10px;
+      font-size: clamp(30px, 4vw, 54px);
+      line-height: 1.05;
+      letter-spacing:-.02em;
     }
     .dek{
-      max-width: 82ch;
-      color: rgba(255,255,255,.74);
-      font-size: 18px;
-      line-height: 1.45;
-      margin: 0 0 16px;
-    }
-
-    .meta{
-      display:flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items:center;
-      color: var(--muted);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      font-size: 12.5px;
-      border-top: 1px solid rgba(255,255,255,.10);
-      padding-top: 14px;
-      margin-top: 16px;
-    }
-
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 26px;
-      align-items:start;
-    }
-
-    /* reading column */
-    article{
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: rgba(255,255,255,.03);
-      box-shadow: var(--shadow);
-      padding: 28px 22px;
-    }
-
-    .chapter{
-      display:flex;
-      align-items:center;
-      gap: 12px;
-      margin: 38px auto 18px;
-      max-width: var(--max);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color: rgba(255,255,255,.76);
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      font-size: 12px;
-    }
-    .chapter i{
-      flex:1;
-      height: 1px;
-      background: rgba(255,255,255,.12);
-    }
-
-    p{
-      max-width: var(--max);
-      margin: 0 auto 18px;
-      font-size: 18px;
-      line-height: 1.72;
-      letter-spacing: .004em;
-    }
-
-    .lede{
-      font-size: 19px;
+      position:relative;
+      margin: 0;
+      max-width: 74ch;
+      font-size: 16px;
       line-height: 1.7;
-      color: rgba(255,255,255,.86);
+      color: rgba(255,255,255,.78);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    .meta{
+      position:relative;
+      margin-top: 14px;
+      display:flex;
+      flex-wrap:wrap;
+      gap: 10px;
+      align-items:center;
+      color: rgba(255,255,255,.62);
+      font-size: 12px;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
 
-    /* reveal animation */
+    .enter{
+      position:relative;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      margin-top: 14px;
+      width: fit-content;
+      text-decoration:none;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-size: 13px;
+      color: rgba(255,255,255,.88);
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.08);
+    }
+    .enter:hover{ background: rgba(255,255,255,.12); }
+    .enter i{
+      width: 18px; height: 18px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 18px rgba(142,243,197,.35);
+    }
+
+    /* Layout */
+    .wrap{
+      max-width: var(--maxWide);
+      margin: 0 auto;
+      padding: 0 16px 70px;
+    }
+
+    .section{
+      margin: 28px 0;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 18px;
+      background: rgba(255,255,255,.02);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .section-head{
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap: 12px;
+      flex-wrap:wrap;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    .kicker{
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: 11px;
+      color: rgba(255,255,255,.64);
+    }
+    .section-title{
+      margin: 6px 0 0;
+      font-size: 22px;
+      letter-spacing:-.01em;
+      color: rgba(255,255,255,.92);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    .section-sub{
+      color: rgba(255,255,255,.66);
+      font-size: 12px;
+      margin-left:auto;
+    }
+
+    /* Story body */
+    article{
+      max-width: var(--max);
+      margin: 36px auto 0;
+      padding: 0 6px;
+    }
+    .story h2{
+      margin: 40px 0 10px;
+      font-size: 26px;
+      line-height: 1.2;
+      letter-spacing:-.01em;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    .story p{
+      margin: 0 0 16px;
+      font-size: 18px;
+      line-height: 1.82;
+      color: rgba(255,255,255,.90);
+    }
+    .story .small{
+      font-size: 14px;
+      line-height: 1.7;
+      color: rgba(255,255,255,.68);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    /* Reveal animation */
     .reveal{
       opacity: 0;
-      transform: translateY(14px);
-      transition: opacity .7s ease, transform .7s ease;
+      transform: translateY(16px);
+      transition: opacity .65s ease, transform .65s ease;
     }
     .reveal.in{
       opacity: 1;
-      transform: translateY(0px);
-    }
-
-    /* pullquote card */
-    .quote{
-      max-width: var(--max);
-      margin: 26px auto;
-      border: 1px solid rgba(255,255,255,.12);
-      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
-      border-radius: 16px;
-      padding: 18px 18px 16px;
-      box-shadow: 0 20px 40px rgba(0,0,0,.28);
-    }
-    .quote blockquote{
-      margin:0;
-      font-size: 20px;
-      line-height: 1.55;
-      color: rgba(255,255,255,.90);
-    }
-    .quote small{
-      display:block;
-      margin-top: 10px;
-      color: var(--muted);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
-
-    /* inline accent highlight */
-    mark{
-      background: linear-gradient(90deg, rgba(142,243,197,.25), rgba(154,167,255,.22));
-      color: rgba(255,255,255,.92);
-      padding: 0 .2em;
-      border-radius: .25em;
-    }
-
-    /* footnotes / credits */
-    details{
-      max-width: var(--max);
-      margin: 28px auto 0;
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 14px;
-      background: rgba(255,255,255,.03);
-      padding: 12px 14px;
-    }
-    details summary{
-      cursor:pointer;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color: rgba(255,255,255,.80);
-      list-style: none;
-    }
-    details summary::-webkit-details-marker{ display:none; }
-    details p{ margin: 12px 0 0; font-size: 14px; line-height: 1.6; color: var(--muted); }
-
-    /* sticky section label (updates as you scroll) */
-    .now{
-      position: fixed;
-      right: max(4vw, 14px);
-      bottom: 16px;
-      z-index: 60;
-      max-width: 340px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(11,13,18,.62);
-      backdrop-filter: blur(12px);
-      border-radius: 16px;
-      padding: 12px 12px;
-      box-shadow: 0 16px 36px rgba(0,0,0,.4);
-      display:flex;
-      gap: 10px;
-      align-items:flex-start;
-      opacity: 0;
-      transform: translateY(12px);
-      transition: opacity .35s ease, transform .35s ease;
-    }
-    .now.on{
-      opacity: 1;
       transform: translateY(0);
     }
-    .now b{
+
+    /* Viz grid */
+    .viz-grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      padding: 14px;
+    }
+    @media(min-width: 920px){
+      .viz-grid{
+        grid-template-columns: 1.25fr .75fr;
+        gap: 16px;
+      }
+    }
+
+    .card{
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      padding: 14px 14px;
+    }
+    .card h3{
+      margin: 0 0 6px;
+      font-size: 14px;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: rgba(255,255,255,.84);
+      letter-spacing:.01em;
+    }
+    .card .hint{
+      margin: 0 0 10px;
+      font-size: 12px;
+      color: rgba(255,255,255,.62);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      line-height: 1.45;
+    }
+
+    /* Timeline */
+    .timeline-line{
+      height:2px;
+      background: rgba(255,255,255,.12);
+      border-radius:999px;
+      margin: 10px 2px 0;
+    }
+    .timeline{
+      display:grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-top: -10px;
+      padding-top: 4px;
+    }
+    .tnode{
+      text-align:left;
+      min-width: 0;
+    }
+    .dot{
+      width:12px; height:12px;
+      border-radius:999px;
+      background: rgba(255,255,255,.22);
+    }
+    .dot.hot{
+      background: linear-gradient(90deg,var(--accent),var(--accent2));
+      box-shadow: 0 0 14px rgba(154,167,255,.25);
+    }
+    .twhen{
+      margin-top:8px;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       font-size: 12px;
-      color: rgba(255,255,255,.72);
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      display:block;
-      margin-bottom: 4px;
+      color: rgba(255,255,255,.74);
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
     }
-    .now span{
+    .twhat{
+      font-size: 12px;
+      color: rgba(255,255,255,.58);
+      line-height: 1.35;
+      margin-top: 2px;
+    }
+    @media(max-width: 720px){
+      .timeline{ grid-template-columns: 1fr; margin-top: 10px; }
+      .timeline-line{ display:none; }
+      .tnode{ display:flex; gap:10px; }
+      .tnode > div:last-child{ flex:1; }
+      .twhen{ margin-top:0; }
+    }
+
+    /* Money split */
+    .bar{
+      height: 14px;
+      border-radius: 999px;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+    }
+    .bar > i{
+      display:block;
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width .9s cubic-bezier(.2,.8,.2,1);
+    }
+    .bar-labels{
+      display:flex;
+      justify-content:space-between;
+      margin-top:6px;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-size: 12px;
+      color: rgba(255,255,255,.62);
+    }
+
+    /* Flow diagram */
+    .flow{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    @media(min-width: 920px){
+      .flow{ grid-template-columns: repeat(5, 1fr); }
+    }
+    .step{
+      position:relative;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      border-radius: 14px;
+      padding: 12px 12px 10px;
+      overflow:hidden;
+    }
+    .step:before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: radial-gradient(500px 160px at 20% 0%, rgba(142,243,197,.12), transparent 55%);
+      opacity:.8;
+      pointer-events:none;
+    }
+    .step b{
+      position:relative;
+      display:block;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-size: 12px;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      color: rgba(255,255,255,.70);
+      margin-bottom: 6px;
+    }
+    .step p{
+      position:relative;
+      margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       font-size: 13px;
-      color: rgba(255,255,255,.86);
-      line-height: 1.35;
+      color: rgba(255,255,255,.82);
+      line-height: 1.45;
+    }
+    .arrow{
+      display:none;
+    }
+    @media(min-width: 920px){
+      .step{ padding-bottom: 12px; }
+      .arrow{
+        display:block;
+        position:absolute;
+        right:-10px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 22px; height: 22px;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,.12);
+        background: rgba(255,255,255,.04);
+        box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      }
+      .arrow:after{
+        content:"";
+        position:absolute;
+        left: 8px; top: 6px;
+        width: 7px; height: 7px;
+        border-right: 2px solid rgba(255,255,255,.70);
+        border-bottom: 2px solid rgba(255,255,255,.70);
+        transform: rotate(-45deg);
+      }
     }
 
-    /* reading mode (auto scroll) */
-    .reading{
-      outline: 1px solid rgba(142,243,197,.25);
-      box-shadow: 0 0 0 6px rgba(142,243,197,.06), var(--shadow);
+    /* Identity flip cards */
+    .flip-grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    @media(min-width: 920px){
+      .flip-grid{ grid-template-columns: 1fr 1fr; }
+    }
+    .flip{
+      perspective: 900px;
+    }
+    .flip button{
+      width:100%;
+      border: 0;
+      background: transparent;
+      padding:0;
+      cursor:pointer;
+      color: inherit;
+      text-align:left;
+    }
+    .flip-inner{
+      position:relative;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      min-height: 160px;
+      transform-style: preserve-3d;
+      transition: transform .75s cubic-bezier(.2,.85,.2,1);
+      box-shadow: 0 18px 55px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+    .flip-inner:before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      background: linear-gradient(120deg, rgba(142,243,197,.12), rgba(154,167,255,.10), transparent 65%);
+      opacity:.65;
+      filter: blur(24px);
+      pointer-events:none;
+    }
+    .flip.is-flipped .flip-inner{ transform: rotateY(180deg); }
+
+    .face{
+      position:absolute;
+      inset:0;
+      padding: 14px 14px 12px;
+      backface-visibility: hidden;
+      display:flex;
+      flex-direction:column;
+      gap: 8px;
+    }
+    .back{ transform: rotateY(180deg); }
+
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-size: 11px;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      color: rgba(255,255,255,.70);
+    }
+    .pill{
+      width:10px;height:10px;border-radius:999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 14px rgba(142,243,197,.25);
+    }
+    .id-title{
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-size: 16px;
+      color: rgba(255,255,255,.90);
+      margin: 0;
+      line-height: 1.25;
+    }
+    .id-meta{
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-size: 12px;
+      color: rgba(255,255,255,.66);
+      line-height: 1.45;
+      margin:0;
+    }
+    .flip-hint{
+      margin-top:auto;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-size: 12px;
+      color: rgba(255,255,255,.62);
+    }
+    .kbd{
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      border-radius: 8px;
+      padding: 4px 8px;
+      font-size: 11px;
+      color: rgba(255,255,255,.72);
     }
 
-    /* responsive */
-    @media (min-width: 960px){
-      main{ padding-top: 54px; }
-      article{ padding: 34px 28px; }
+    /* Parallel activation meter */
+    .meter{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .meter-row{
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 14px;
+      background: rgba(255,255,255,.03);
+      padding: 10px 12px;
+    }
+    .meter-row .row-top{
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      align-items:baseline;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    .meter-row .label{
+      font-size: 13px;
+      color: rgba(255,255,255,.84);
+    }
+    .meter-row .pct{
+      font-size: 12px;
+      color: rgba(255,255,255,.66);
+      white-space:nowrap;
+    }
+    .meter-row .track{
+      margin-top: 8px;
+      height: 12px;
+      border-radius: 999px;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+    }
+    .meter-row .fill{
+      height:100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width .12s linear;
+    }
+    .meter-note{
+      margin: 6px 0 0;
+      font-size: 12px;
+      color: rgba(255,255,255,.58);
+      line-height: 1.45;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    /* Pull quote */
+    .quote{
+      border-left: 3px solid rgba(142,243,197,.55);
+      padding-left: 14px;
+      margin: 22px 0;
+      color: rgba(255,255,255,.84);
+      background: rgba(255,255,255,.02);
+      border-radius: 12px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+    .quote p{
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.7;
+    }
+
+    /* Footer */
+    footer{
+      max-width: var(--max);
+      margin: 60px auto 0;
+      padding: 0 6px;
+      color: rgba(255,255,255,.60);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .divider{
+      height:1px;
+      background: rgba(255,255,255,.08);
+      margin: 18px 0;
     }
   </style>
 </head>
 
 <body>
-  <div class="progress" aria-hidden="true"><i id="bar"></i></div>
+  <div class="topbar" aria-hidden="true"><i id="pageProgress"></i></div>
 
-  <header>
-    <div class="nav">
-      <div class="brand">
-        <b>Interactive story prototype</b>
-        <span>Scroll-based reading, reveals, pull quotes, reading mode</span>
-      </div>
-
-      <div class="controls">
-        <div class="pill"><span class="dot"></span><span id="status">Scroll</span></div>
-        <button id="toggleReading">Toggle reading mode</button>
-        <button id="jumpTop">Top</button>
+  <div class="nav">
+    <div class="nav-inner">
+      <div>Longform prototype</div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
+        <a href="#viz">Visual guide</a>
+        <a href="#story">Story</a>
+        <a href="#credits">Credits</a>
       </div>
     </div>
-  </header>
+  </div>
 
-  <main>
-    <section class="hero">
+  <header class="hero">
+    <div class="hero-inner reveal">
       <h1>“We touch bros but we no gay”: The hidden intimacies of Ghana’s fraud boys</h1>
       <p class="dek">
         Padlocked inside for months to work on online scams, young men are forbidden to touch women as part of a cleansing ritual.
         In the silence of that isolation, they reach for each other—and sometimes for trans women—exploiting a loophole that stays behind closed doors.
       </p>
+
+      <a class="enter" href="#viz"><i aria-hidden="true"></i><span>Enter story</span></a>
+
       <div class="meta">
-        <span>Prototype: HTML/CSS/JS (single file)</span>
+        <span>Single-file HTML • CSS • JS</span>
         <span>•</span>
-        <span>Scroll for animation + section tracking</span>
+        <span>Scroll-reveal + in-story data blocks</span>
+        <span>•</span>
+        <span>Flip cards + activation meter</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- VISUAL GUIDE -->
+    <section id="viz" class="section reveal">
+      <div class="section-head">
+        <div>
+          <div class="kicker">Visual guide</div>
+          <div class="section-title">A structure before the intimacy</div>
+        </div>
+        <div class="section-sub">Timeline • Money split • Flow • Identity cards • Activation meter</div>
+      </div>
+
+      <div class="viz-grid">
+        <div class="card reveal">
+          <h3>Sakawa timeline (from your text)</h3>
+          <p class="hint">These are the explicit time anchors you already wrote. On mobile, the timeline collapses into a stacked list.</p>
+          <div class="timeline-line"></div>
+          <div class="timeline">
+            <div class="tnode">
+              <div class="dot hot"></div>
+              <div>
+                <div class="twhen">Late 1990s</div>
+                <div class="twhat">Sakawa gains prominence</div>
+              </div>
+            </div>
+            <div class="tnode">
+              <div class="dot"></div>
+              <div>
+                <div class="twhen">2007</div>
+                <div class="twhat">Intertwines with ritual practices</div>
+              </div>
+            </div>
+            <div class="tnode">
+              <div class="dot"></div>
+              <div>
+                <div class="twhen">2013</div>
+                <div class="twhat">Global cybercrime ranking + outcry</div>
+              </div>
+            </div>
+            <div class="tnode">
+              <div class="dot"></div>
+              <div>
+                <div class="twhen">2020–2021</div>
+                <div class="twhat">Market for complete scam profiles</div>
+              </div>
+            </div>
+            <div class="tnode">
+              <div class="dot"></div>
+              <div>
+                <div class="twhen">2025</div>
+                <div class="twhat">Padlock exit + disputes over cuts</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card reveal" id="moneyCard">
+          <h3>Economics of “Padlock” (as described)</h3>
+          <p class="hint">Animated bars kick in when this card scrolls into view.</p>
+
+          <div style="margin-top:10px; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; font-size:12px; color:rgba(255,255,255,.62);">
+            Cut at 65%
+          </div>
+          <div class="bar"><i data-target="65"></i></div>
+          <div class="bar-labels"><span>Boys: 35%</span><span>Uche: 65%</span></div>
+
+          <div style="margin-top:14px; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; font-size:12px; color:rgba(255,255,255,.62);">
+            Cut raised to 68%
+          </div>
+          <div class="bar"><i data-target="68"></i></div>
+          <div class="bar-labels"><span>Boys: 32%</span><span>Uche: 68%</span></div>
+        </div>
+
+        <div class="card reveal" style="grid-column: 1 / -1;">
+          <h3>Padlock system (flow diagram)</h3>
+          <p class="hint">A clean structural map you can place before the reader hits the more delicate sections.</p>
+          <div class="flow">
+            <div class="step">
+              <b>1 • Recruitment</b>
+              <p>Entry through cafés, mentors, networks.</p>
+              <span class="arrow" aria-hidden="true"></span>
+            </div>
+            <div class="step">
+              <b>2 • Cleansing</b>
+              <p>Trip, supplies, abstinence instruction.</p>
+              <span class="arrow" aria-hidden="true"></span>
+            </div>
+            <div class="step">
+              <b>3 • Padlock</b>
+              <p>Months indoors; controlled routine.</p>
+              <span class="arrow" aria-hidden="true"></span>
+            </div>
+            <div class="step">
+              <b>4 • Night work</b>
+              <p>Profiles, scripts, time zones, volume.</p>
+              <span class="arrow" aria-hidden="true"></span>
+            </div>
+            <div class="step">
+              <b>5 • Exit + Cut</b>
+              <p>Targets met; money split contested.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card reveal" style="grid-column: 1 / -1;">
+          <h3>Identity cards (parallel profiles)</h3>
+          <p class="hint">Click a card to flip it. This is your “two lives” visualization for Joey’s constructed profiles.</p>
+
+          <div class="flip-grid">
+            <div class="flip" data-flip>
+              <button type="button" aria-label="Flip identity card">
+                <div class="flip-inner">
+                  <div class="face front">
+                    <div class="tag"><span class="pill"></span> Profile A</div>
+                    <p class="id-title">White gay bartender + PhD student</p>
+                    <p class="id-meta">Location: Ohio • Persona: academic + nightlife</p>
+                    <p class="id-meta">Function: intimacy, credibility, long conversation arcs</p>
+                    <div class="flip-hint"><span>Click to flip</span><span class="kbd">↺</span></div>
+                  </div>
+                  <div class="face back">
+                    <div class="tag"><span class="pill"></span> Mechanics</div>
+                    <p class="id-title">The labor behind the mask</p>
+                    <p class="id-meta">Photos purchased to match the identity.</p>
+                    <p class="id-meta">Scripted voice, consistent time zone habits, routine maintenance.</p>
+                    <div class="flip-hint"><span>Click to return</span><span class="kbd">↻</span></div>
+                  </div>
+                </div>
+              </button>
+            </div>
+
+            <div class="flip" data-flip>
+              <button type="button" aria-label="Flip identity card">
+                <div class="flip-inner">
+                  <div class="face front">
+                    <div class="tag"><span class="pill"></span> Profile B</div>
+                    <p class="id-title">Young widowed white woman</p>
+                    <p class="id-meta">Location: Alaska • Persona: grief + vulnerability</p>
+                    <p class="id-meta">Function: emotional pull, urgency, “care” performance</p>
+                    <div class="flip-hint"><span>Click to flip</span><span class="kbd">↺</span></div>
+                  </div>
+                  <div class="face back">
+                    <div class="tag"><span class="pill"></span> Market</div>
+                    <p class="id-title">Profiles as commodities</p>
+                    <p class="id-meta">During 2020–2021: photos, IDs, nudes, bank accounts sold as bundles.</p>
+                    <p class="id-meta">“You just needed to know where to look and have money to pay.”</p>
+                    <div class="flip-hint"><span>Click to return</span><span class="kbd">↻</span></div>
+                  </div>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card reveal" style="grid-column: 1 / -1;" id="meterCard">
+          <h3>Parallel activation meter</h3>
+          <p class="hint">
+            As you scroll through the story, these bars fill to reflect where you are in the narrative:
+            <b>Structure</b>, <b>Work</b>, <b>Abstinence pressure</b>, <b>Loopholes + secrecy</b>.
+          </p>
+
+          <div class="meter">
+            <div class="meter-row">
+              <div class="row-top">
+                <div class="label">Structure (system-building)</div>
+                <div class="pct" id="m1pct">0%</div>
+              </div>
+              <div class="track"><div class="fill" id="m1"></div></div>
+              <p class="meter-note">Recruitment → cleansing → padlock → exit logic.</p>
+            </div>
+
+            <div class="meter-row">
+              <div class="row-top">
+                <div class="label">Work intensity (night labor)</div>
+                <div class="pct" id="m2pct">0%</div>
+              </div>
+              <div class="track"><div class="fill" id="m2"></div></div>
+              <p class="meter-note">Profiles, scripts, time zones, markets for identities.</p>
+            </div>
+
+            <div class="meter-row">
+              <div class="row-top">
+                <div class="label">Abstinence pressure</div>
+                <div class="pct" id="m3pct">0%</div>
+              </div>
+              <div class="track"><div class="fill" id="m3"></div></div>
+              <p class="meter-note">The instruction: “stay away from women.”</p>
+            </div>
+
+            <div class="meter-row">
+              <div class="row-top">
+                <div class="label">Loopholes + secrecy</div>
+                <div class="pct" id="m4pct">0%</div>
+              </div>
+              <div class="track"><div class="fill" id="m4"></div></div>
+              <p class="meter-note">Touching “bros,” trans women, shared silence as protection.</p>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
-    <article id="story">
-      <!-- CHAPTER: OPEN -->
-      <div class="chapter" data-label="Opening"><span>Opening</span><i></i></div>
-
-      <p class="lede reveal">
-        Uche Kamal* built his first fortune by inventing an orphanage that didn’t exist. At twenty, with nothing but a borrowed computer in a dingy Accra internet café, he wrote to a Christian charity in the UK, spinning a story of abandoned children and desperate need. They sent $700 and he pocketed every cedi.
-      </p>
-
-      <p class="reveal">
-        But, as he tells me now at 32, his path into the world of fraud began much earlier, at seventeen, when he left a quiet village in Umuaru, Imo State, for Ghana. His father had just died, and life at home had grown unbearably hard for his mother and seven younger siblings, meaning school was no longer an option. So when an uncle offered him a place in Abbossey Okai, a bustling spare-parts district in Accra, to learn the trade and earn something, he agreed.
-      </p>
-
-      <p class="reveal">
-        In Ghana, he shared a room with eight other people in a slum near the Accra Cocoa Marketing Board station. He hated every part of it, he told me, sucking his teeth and dabbing at the sweat on his face with a handkerchief. He was the youngest in the stifling room and was constantly sent on errands by the older men, even when he was exhausted from sleeping on the floor.
-      </p>
-
-      <p class="reveal">
-        One of the senior boys from Lagos took a liking to him for his obedience and became his first mentor. At 20, he taught him how to smoke and began taking him along on his daily rounds, which often involved working out of local internet cafés in Accra. It was there Uche was introduced to the budding criminal underworld of penpal culture and Yahoo Mail chatrooms, which cybercriminals used to meet clients.
-      </p>
-
-      <div class="quote reveal">
-        <blockquote>“African men also deserve a shot at life, to be rich and have access to cars and houses like white men and celebrities did.”</blockquote>
-        <small>— Uche Kamal</small>
+    <!-- STORY -->
+    <section id="story" class="section reveal">
+      <div class="section-head">
+        <div>
+          <div class="kicker">Story</div>
+          <div class="section-title">Text (as provided)</div>
+        </div>
+        <div class="section-sub">Scroll reveals are subtle; you can remove them by deleting the JS reveal observer.</div>
       </div>
 
-      <p class="reveal">
-        Shortly after was when he made his first money $700 fortune from the UK Christian Charity. He reinvested that money into more successful scams, selling fictitious land and gold to men in Australia and the US.
+      <article class="story">
+        <p class="small">
+          Note: This prototype keeps your paragraphs intact (lightly formatted for readability). You can swap in updated drafts without changing the visualization code.
+        </p>
+
+        <p><b>Summary:</b> Padlocked inside for months to work on online scams, young men are forbidden to touch women as part of a cleansing ritual. In the silence of that isolation, they reach for each other—and sometimes for trans women—exploiting a loophole that stays behind closed doors.</p>
+
+        <p>Uche Kamal* built his first fortune by inventing an orphanage that didn’t exist. At twenty, with nothing but a borrowed computer in a dingy Accra internet café, he wrote to a Christian charity in the UK, spinning a story of abandoned children and desperate need. They sent $700 and he pocketed every cedi.</p>
+
+        <p>But, as he tells me now at 32, his path into the world of fraud began much earlier, at seventeen, when he left a quiet village in Umuaru, Imo State, for Ghana. His father had just died, and life at home had grown unbearably hard for his mother and seven younger siblings, meaning school was no longer an option. So when an uncle offered him a place in Abbossey Okai, a bustling spare-parts district in Accra, to learn the trade and earn something, he agreed.</p>
+
+        <p>In Ghana, he shared a room with eight other people in a slum near the Accra Cocoa Marketing Board station. He hated every part of it, he told me, sucking his teeth and dabbing at the sweat on his face with a handkerchief. He was the youngest in the stifling room and was constantly sent on errands by the older men, even when he was exhausted from sleeping on the floor.</p>
+
+        <p>One of the senior boys from Lagos took a liking to him for his obedience and became his first mentor. At 20, he taught him how to smoke and began taking him along on his daily rounds, which often involved working out of local internet cafés in Accra. It was there Uche was introduced to the budding criminal underworld of penpal culture and Yahoo Mail chatrooms, which cybercriminals used to meet clients.</p>
+
+        <p>Shortly after was when he made his first money $700 fortune from the UK Christian Charity. He reinvested that money into more successful scams, selling fictitious land and gold to men in Australia and the US.</p>
+
+        <p>Now, Uche considers himself successful. He owns three houses—two in Accra and one in Tamale—and a string of restaurants generating legitimate income. He has four personal cars and more than eleven tricycles operating for him just in northern Ghana.</p>
+
+        <p>A busy man, Uche had postponed our meeting several times over eight months since we were first introduced by my ex-boyfriend. Even during our eventual meeting at a studio on the outskirts of Tamale (one of West Africa’s fastest growing cities), his phone kept ringing and buzzing with text messages. After I politely asked him to turn it off, we started our conversation.</p>
+
+        <p>I had taken a deep interest in researching the role of secrecy in male intimacy and male/male sexual relationships after first discussing the habits of “fraud boys” — young internet scammers operating primarily in Ghana—with my ex-boyfriend.</p>
+
+        <p>Cybercrime, locally known as sakawa, started gaining prominence in Ghana in the late 1990’s. This term, derived from Hausa words loosely interpreted as “put inside” or “put money inside,” has come to represent a complex combination of internet fraud (mainly romance scams) and traditional spiritual practices that shape the lives of many poor young Ghanaian men.</p>
+
+        <p>It is believed to have originated from Zongo (predominantly muslim) communities such as Nima, Mamobi, and Accra New Town. It evolved from the penpal culture that flourished as Ghana encouraged internet adoption and ICT growth. It became more sophisticated with the influx of foreigners and the increase in knowledge exchange, especially between youth in Ghana and Nigeria. As internet access spread, so did sakawa.</p>
+
+        <p>In 2007, these scams became intertwined with ritual practices, as many fraudsters began consulting traditional spiritualists to manipulate their victims. By 2013, Ghana ranked second in Africa and seventh globally in cybercrime rates, prompting public outcry and eventual government intervention.</p>
+
+        <p>This July and in a case that sparked headlines, the U.S. government announced that a Ghanaian national Joseph Badu Boateng, aka “Dada Joe Remix” had been extradited to the United States for his role in a fraud scheme targeting the elderly.</p>
+
+        <h2>Meeting Uche Kamal</h2>
+
+        <p>Though he was born in Nigeria, Uche identifies as Ghanaian. He showed me his Ghana card and mentioned that he spoke fluent Twi and Ga. After his father’s death, continuing education in Nigeria became impossible, so moving to Ghana seemed the only logical step.</p>
+
+        <p>Uche was young but he was wise and business savvy, just like his uncles. He learnt fast, and it wasn’t any different when he was introduced to online fraud. He was never arrested and boasts of a “successful” career that many young scammers may even aspire to. Today, he insists he is solely focused on legitimate ventures.</p>
+
+        <div class="quote reveal">
+          <p>“African men also deserve a shot at life, to be rich and have access to cars and houses like white men and celebrities did,” Uche says. “We are intelligent people when we are given chances.”</p>
+        </div>
+
+        <p>Indeed true to his philosophy, Uche has dedicated some of his properties in Accra and Tamale to mentoring young men eager to succeed. They live rent-free, eat for free, and have access to high-speed internet—all tools to help them concentrate on making money. Frustrated by recent poor internet service, he is even considering purchasing a private internet service provider (ISP).</p>
+
+        <p>I visited one of Uche’s houses one midnight in July, accompanied by my ex-boyfriend, who first introduced us. The house, known among the boys as “Padlock” was an unassuming building with two bedrooms, a large hall, a kitchen downstairs, and at least three more rooms upstairs. The name carried its own history. In their world, “Padlock” refers to long periods (usually months) of working in a house that the fraud boys never leave. It means total immersion in the work of scamming and is designed to eliminate any external distractions.</p>
+
+        <p>The house was what I can only describe as a sanctified scammer sanctuary where contact with the outside world, especially with women, was absolutely discouraged. The boys entered the house and did not come out for months yet the dedication and discipline I saw on their faces shocked me. I counted eleven young men inside the house—five of whom I spoke to. All were Ghanaians. The eldest, 27-year-old Joey* from Agona Swedru, had been padlocked for three years.</p>
+
+        <p>“I want to make $200,000 before I leave this place or talk to my family in person again,” Joey told me. His family believed he was studying in Turkey. To validate the lie, he occasionally travelled there to take pictures.</p>
+
+        <p>“I send them money too when I have. Because of family and sometimes issues it is hard to make money lately but it is not impossible. I know someone here who made more than that in two months during covid last year. It is luck and a lot of investment in your work. Time and money. Patience and dedication.”</p>
+
+        <h2>Rituals, luck, and brotherhood</h2>
+
+        <p>One evening at the beachside with my ex-boyfriend, I asked about rumours of coffins and rituals among fraud boys and how true they were. In the 2000s, when I was growing up as a teen, several stories on the local news and movies about the rituals of fraud boys had traumatised me and my cousins. There were stories of fraudsters engaging in ritual practices involving coffins and abstaining from bathing to attract luck.</p>
+
+        <p>My ex laughed and assured me there were no coffins, at least not with the boys he knew. But he did not deny the rumours of no-bathing, explaining that each scammer adopted different routines for luck. It was a combination of modern technology and traditional African spirituality.</p>
+
+        <p>When I asked Uche if his brothers had to perform such rituals before padlocking, he laughed and admitted they did, but declined to elaborate.</p>
+
+        <p>I reconnected with Joey in March 2025 after matching on Tinder in February. After a brief romantic encounter, I asked to interview him about Uche and the padlock system.</p>
+
+        <p>He first met Uche at an internet café in Agona Swedru. At the time, Joey had just completed secondary school and gained university admission to study real estate, but his mother died six months later after giving birth to twin girls. Left with five orphaned kids, Joey’s education was simply not a priority for his family who were all poor farmers. But he was determined to go to school.</p>
+
+        <p>Encouraged by friends, Joey turned to internet cafés where he learnt to create Facebook accounts and began chatting with potential clients. His first client, Tim, was a rich farmer and single father living in Colorado. Their correspondence didn’t yield benefits and Joey moved on to other clients and other dating websites, pretending to be a gay social worker living in Canada.</p>
+
+        <p>When his first success— $360—came, it was glorious. More success followed and with time Uche heard of him and met him. He proposed to Joey to move to Accra and work for him: he knew a few young men from other countries who could teach him a lot of things, and Joey would get a place to sleep, food to eat, and internet to work. Joey jumped at the opportunity.</p>
+
+        <p>Joey moved to Accra with Uche and three other young men. They lived together at Kwashieman. The same night they arrived in Accra, six more recruits from other regions joined them. Uche gave them new laptops and took them for “cleansing.” According to Joey, cleansing was something he knew and expected. All the boys in Agona Swedru did it in different ways. Uche assured them they were going to a prophetess, but if any of them wanted to go back home, they were free to leave with their laptops. No one did.</p>
+
+        <p>On a Saturday night, at 8pm, they travelled in a hired bus to Kwahu Pepease in Ghana’s eastern region. They arrived at dawn and lodged at a guest house. The next morning, Joey went to town with three other boys to buy red and white candles, incense, and holy water.</p>
+
+        <p>They had been instructed that for the rest of their stay in Kwahu Pepease, they were to stay away from women. The greatest sin any purified man can commit is touching or having sex with a woman, they were warned.</p>
+
+        <h2>“We touch bros but we no gay”</h2>
+
+        <p>Equipped with the internet, spiritual cleansing, and basic needs, the fraud boys began their work. Due to time zone differences, they slept during the day and worked at night.</p>
+
+        <p>Much of their job involved fabricating elaborate stories. Joey created two profiles: a white gay bartender and PhD student in Ohio, and a young widowed white woman in Alaska. He even purchased photos to match. During the 2020–2021 COVID lockdowns, a market emerged for complete scam profiles; photos, nudes, IDs, bank accounts.</p>
+
+        <p>“You just needed to know where to look and have money to pay,” Joey says.</p>
+
+        <p>With the support of Uche and collective knowledge-sharing, the work was relatively easy. The hard part was abstaining.</p>
+
+        <p>“The hardest part of padlocking is the lack of sex and not touching women,” Joey says. “A lot of us were dying in that house, but we also had ways. It might be dirty to sleep with a woman, but they say nothing about boys or trans girls.”</p>
+
+        <p>Anthropologists and gender scholars have long studied homoeroticism among Ghanaian men. One of the central themes of Kwame Edwin Otu’s book <i>Amphibious Subjects</i>, for instance, discusses Sasso (a term for self-identified effeminate men) men who have sex and homoerotic relations with other men. Otu argues that these men’s sexual identities shift depending on context.</p>
+
+        <p>Similarly, Godfried Asante in his ethnography also presents indigenous queer men identifying as both straight and gay at the same time and the contextually contingent negotiations men who sleep with men partake in their daily lives to negotiate the culture of silence on sexuality in Ghana.</p>
+
+        <p>He describes how the young men coped—masturbating alone, or together, sometimes inviting trans women. “We touch bros but we no gay,” he insists.</p>
+
+        <p>For my ex, padlocking introduced him to male intimacy and sex with trans women. As Joey told me, even though he had long suspected his attraction to gender-diverse people, Agona Swedru was not the place to act on this attraction.</p>
+
+        <p>The others echoed similar sentiments—silent nods rather than words. It was brotherhood and convenience and it was done with the understanding that nobody would ever talk about it later.</p>
+
+        <p>A code of secrecy protected this and as long as it was never acknowledged, it was not a problem. Self-intimacy, penetrative sex (with each other or trans people) and shared masturbation together were loopholes in the spiritual instruction to abstain from women. As long as they bathed with holy water blessed by their prophetess, they believed they were clean. This is how they lived, absolutely nothing gay.</p>
+
+        <p>When we reconnected in 2025, Joey told me he had finally made his $200,000 and left the padlock house, making roughly $375,000 for Uche.</p>
+
+        <p>“Uche was a good, kind and just man but the 65% cut he took from the boys was too much,” he says. “He had even raised it to 68%. It was a little too much and sometimes the boys complained.”</p>
+
+        <p>As he spoke, I thought of the 27-year-old I first met in Agona Swedru, the boy who just wanted to finish school after his mother died. He now owns property in Dubai and Tamale, but he still speaks of Uche with a mix of respect and quiet resentment, remembering the long nights, the holy water baths, and the secrets they all agreed to carry.</p>
+
+        <p class="small">*Names changed to protect identities</p>
+
+        <div class="divider"></div>
+
+        <p class="small" id="credits">
+          Edited/Reviewed by Samuel Banjoko, PK Cross, Caleb Okereke, Kenneth Awom, and Uzoma Ihejirika<br/>
+          Illustrated by Rex Opara.
+        </p>
+      </article>
+    </section>
+
+    <footer>
+      <div class="divider"></div>
+      <p>
+        GitHub Pages tip: if you’re using a repository named <b>USERNAME.github.io</b>, your site will be at
+        <b>https://USERNAME.github.io/</b>. If it’s a project repo, it’s usually <b>https://USERNAME.github.io/REPO/</b>.
       </p>
-
-      <p class="reveal">
-        Now, Uche considers himself successful. He owns three houses—two in Accra and one in Tamale—and a string of restaurants generating legitimate income. He has four personal cars and more than eleven tricycles operating for him just in northern Ghana.
-      </p>
-
-      <p class="reveal">
-        A busy man, Uche had postponed our meeting several times over eight months since we were first introduced by my ex-boyfriend. Even during our eventual meeting at a studio on the outskirts of Tamale (one of West Africa’s fastest growing cities), his phone kept ringing and buzzing with text messages. After I politely asked him to turn it off, we started our conversation.
-      </p>
-
-      <!-- CHAPTER: CONTEXT -->
-      <div class="chapter" data-label="Context"><span>Context</span><i></i></div>
-
-      <p class="reveal">
-        I had taken a deep interest in researching the role of secrecy in male intimacy and male/male sexual relationships after first discussing the habits of “fraud boys” — young internet scammers operating primarily in Ghana — with my ex-boyfriend.
-      </p>
-
-      <p class="reveal">
-        Cybercrime, locally known as sakawa, started gaining prominence in Ghana in the late 1990’s. This term, derived from Hausa words loosely interpreted as “put inside” or “put money inside,” has come to represent a complex combination of internet fraud (mainly romance scams) and traditional spiritual practices that shape the lives of many poor young Ghanaian men.
-      </p>
-
-      <p class="reveal">
-        It is believed to have originated from Zongo (predominantly muslim) communities such as Nima, Mamobi, and Accra New Town. It evolved from the penpal culture that flourished as Ghana encouraged internet adoption and ICT growth. It became more sophisticated with the influx of foreigners and the increase in knowledge exchange, especially between youth in Ghana and Nigeria As internet access spread, so did sakawa.
-      </p>
-
-      <p class="reveal">
-        In 2007, these scams became intertwined with ritual practices, as many fraudsters began consulting traditional spiritualists to manipulate their victims. By 2013, Ghana ranked second in Africa and seventh globally in cybercrime rates, prompting public outcry and eventual government intervention.
-      </p>
-
-      <!-- CHAPTER: PADLOCK -->
-      <div class="chapter" data-label="Padlock"><span>Padlock</span><i></i></div>
-
-      <p class="reveal">
-        I visited one of Uche’s houses one midnight in July, accompanied by my ex-boyfriend, who first introduced us. The house, known among the boys as “Padlock” was an unassuming building with two bedrooms, a large hall, a kitchen downstairs, and at least three more rooms upstairs. The name carried its own history. In their world, “Padlock” refers to long periods (usually months) of working in a house that the fraud boys never leave. It means total immersion in the work of scamming and is designed to eliminate any external distractions.
-      </p>
-
-      <p class="reveal">
-        The house was what I can only describe as a sanctified scammer sanctuary where contact with the outside world, especially with women, was absolutely discouraged. The boys entered the house and did not come out for months yet the dedication and discipline I saw on their faces shocked me. I counted eleven young men inside the house—five of whom I spoke to. All were Ghanaians. The eldest, 27-year-old Joey* from Agona Swedru, had been padlocked for three years.
-      </p>
-
-      <div class="quote reveal">
-        <blockquote>“I want to make $200,000 before I leave this place or talk to my family in person again.”</blockquote>
-        <small>— Joey</small>
-      </div>
-
-      <!-- CHAPTER: RITUALS -->
-      <div class="chapter" data-label="Rituals"><span>Rituals, luck, and brotherhood</span><i></i></div>
-
-      <p class="reveal">
-        One evening at the beachside with my ex-boyfriend, I asked about rumours of coffins and rituals among fraud boys and how true they were. In the 2000s, when I was growing up as a teen, several stories on the local news and movies about the rituals of fraud boys had traumatised me and my cousins. There were stories of fraudsters engaging in ritual practices involving coffins and abstaining from bathing to attract luck.
-      </p>
-
-      <p class="reveal">
-        My ex laughed and assured me there were no coffins, at least not with the boys he knew. But he did not deny the rumours of no-bathing, explaining that each scammer adopted different routines for luck. It was a combination of modern technology and traditional African spirituality.
-      </p>
-
-      <!-- CHAPTER: WE TOUCH BROS -->
-      <div class="chapter" data-label="We touch bros"><span>“We touch bros but we no gay”</span><i></i></div>
-
-      <p class="reveal">
-        Equipped with the internet, spiritual cleansing, and basic needs, the fraud boys began their work. Due to time zone differences, they slept during the day and worked at night.
-      </p>
-
-      <p class="reveal">
-        Much of their job involved fabricating elaborate stories. Joey created two profiles: a white gay bartender and PhD student in Ohio, and a young widowed white woman in Alaska. He even purchased photos to match. During the 2020–2021 COVID lockdowns, a market emerged for complete scam profiles; photos, nudes, IDs, bank accounts.
-      </p>
-
-      <p class="reveal">
-        “You just needed to know where to look and have money to pay,” Joey says.
-      </p>
-
-      <p class="reveal">
-        With the support of Uche and collective knowledge-sharing, the work was relatively easy. The hard part was abstaining.
-      </p>
-
-      <div class="quote reveal">
-        <blockquote>“The hardest part of padlocking is the lack of sex and not touching women… It might be dirty to sleep with a woman, but they say nothing about boys or trans girls.”</blockquote>
-        <small>— Joey</small>
-      </div>
-
-      <p class="reveal">
-        He describes how the young men coped—masturbating alone, or together, sometimes inviting trans women. “We touch bros but we no gay,” he insists.
-      </p>
-
-      <p class="reveal">
-        The others echoed similar sentiments—silent nods rather than words. It was brotherhood and convenience and it was done with the understanding that nobody would ever talk about it later.
-      </p>
-
-      <p class="reveal">
-        A code of secrecy protected this and as long as it was never acknowledged, it was not a problem. Self-intimacy, penetrative sex (with each other or trans people) and shared masturbation together were loopholes in the spiritual instruction to abstain from women. As long as they bathed with holy water blessed by their prophetess, they believed they were clean. This is how they lived, absolutely nothing gay.
-      </p>
-
-      <p class="reveal">
-        When we reconnected in 2025, Joey told me he had finally made his $200,000 and left the padlock house, making roughly $375,000 for Uche.
-      </p>
-
-      <p class="reveal">
-        “Uche was a good, kind and just man but the 65% cut he took from the boys was too much,” he says. “He had even raised it to 68%. It was a little too much and sometimes the boys complained.”
-      </p>
-
-      <p class="reveal">
-        As he spoke, I thought of the 27-year-old I first met in Agona Swedru, the boy who just wanted to finish school after his mother died. He now owns property in Dubai and Tamale, but he still speaks of Uche with a mix of respect and quiet resentment, remembering the long nights, the holy water baths, and the secrets they all agreed to carry.
-      </p>
-
-      <details class="reveal">
-        <summary>Notes and credits (collapsed)</summary>
-        <p>*Names changed to protect identities.</p>
-        <p>Edited/Reviewed by Samuel Banjoko, PK Cross, Caleb Okereke, Kenneth Awom, and Uzoma Ihejirika.</p>
-        <p>Illustrated by Rex Opara.</p>
-      </details>
-    </article>
+    </footer>
   </main>
 
-  <div class="now" id="now">
-    <div class="dot" aria-hidden="true"></div>
-    <div>
-      <b>Now reading</b>
-      <span id="nowText">Opening</span>
-    </div>
-  </div>
-
   <script>
-    // Progress bar
-    const bar = document.getElementById('bar');
-    function updateProgress(){
-      const h = document.documentElement;
-      const scrolled = h.scrollTop || document.body.scrollTop;
-      const height = (h.scrollHeight - h.clientHeight);
-      const pct = height > 0 ? (scrolled / height) * 100 : 0;
-      bar.style.width = pct.toFixed(2) + '%';
-    }
-    window.addEventListener('scroll', updateProgress, {passive:true});
-    updateProgress();
+    // 1) Scroll progress (top bar)
+    const pageProgress = document.getElementById('pageProgress');
+    const onScrollProgress = () => {
+      const doc = document.documentElement;
+      const scrollTop = doc.scrollTop || document.body.scrollTop;
+      const scrollHeight = doc.scrollHeight - doc.clientHeight;
+      const p = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+      pageProgress.style.width = p.toFixed(2) + '%';
+    };
+    window.addEventListener('scroll', onScrollProgress, { passive:true });
+    onScrollProgress();
 
-    // Reveal on scroll
-    const reveals = [...document.querySelectorAll('.reveal')];
-    const io = new IntersectionObserver((entries)=>{
-      for (const e of entries){
-        if (e.isIntersecting){
-          e.target.classList.add('in');
-          io.unobserve(e.target);
+    // 2) Reveal on scroll
+    const revealEls = Array.from(document.querySelectorAll('.reveal'));
+    const revealObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) e.target.classList.add('in');
+      });
+    }, { threshold: 0.15 });
+    revealEls.forEach(el => revealObs.observe(el));
+
+    // 3) Money bars animate when money card appears
+    const moneyCard = document.getElementById('moneyCard');
+    const moneyBars = Array.from(moneyCard.querySelectorAll('.bar > i'));
+    let moneyAnimated = false;
+
+    const moneyObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting && !moneyAnimated){
+          moneyAnimated = true;
+          moneyBars.forEach((bar, idx) => {
+            const target = Number(bar.getAttribute('data-target') || '0');
+            // small stagger
+            setTimeout(() => { bar.style.width = target + '%'; }, idx * 120);
+          });
         }
+      });
+    }, { threshold: 0.35 });
+    moneyObs.observe(moneyCard);
+
+    // 4) Flip cards
+    document.querySelectorAll('[data-flip]').forEach(card => {
+      card.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        card.classList.toggle('is-flipped');
+      });
+      // keyboard access (Enter/Space when focused on button)
+      const btn = card.querySelector('button');
+      if (btn){
+        btn.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' '){
+            e.preventDefault();
+            card.classList.toggle('is-flipped');
+          }
+        });
       }
-    }, { threshold: 0.12 });
-    reveals.forEach(el => io.observe(el));
-
-    // "Now reading" label from chapter markers
-    const now = document.getElementById('now');
-    const nowText = document.getElementById('nowText');
-    const status = document.getElementById('status');
-    const chapters = [...document.querySelectorAll('.chapter')];
-
-    const chapterIO = new IntersectionObserver((entries)=>{
-      // pick the one closest to top (most recently intersecting)
-      const visible = entries.filter(e => e.isIntersecting);
-      if (visible.length){
-        const latest = visible.sort((a,b)=> b.intersectionRatio - a.intersectionRatio)[0];
-        const label = latest.target.dataset.label || latest.target.textContent.trim();
-        nowText.textContent = label;
-        now.classList.add('on');
-      }
-    }, { rootMargin: "-45% 0px -45% 0px", threshold: 0.01 });
-
-    chapters.forEach(c => chapterIO.observe(c));
-
-    // Buttons
-    document.getElementById('jumpTop').addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
-    // Optional reading mode: auto-scroll
-    let reading = false;
-    let rafId = null;
-
-    function autoScroll(){
-      if (!reading) return;
-      window.scrollBy(0, 0.6); // speed
-      rafId = requestAnimationFrame(autoScroll);
-    }
-
+    // 5) Parallel activation meter — driven by story scroll position
     const story = document.getElementById('story');
-    document.getElementById('toggleReading').addEventListener('click', ()=>{
-      reading = !reading;
-      if (reading){
-        story.classList.add('reading');
-        status.textContent = 'Reading mode';
-        autoScroll();
-      } else {
-        story.classList.remove('reading');
-        status.textContent = 'Scroll';
-        if (rafId) cancelAnimationFrame(rafId);
-      }
-    });
+    const meterCard = document.getElementById('meterCard');
 
-    // Stop reading mode if user scrolls manually a lot
-    let manual = 0;
-    window.addEventListener('wheel', ()=>{
-      if (!reading) return;
-      manual++;
-      if (manual > 6){
-        reading = false;
-        story.classList.remove('reading');
-        status.textContent = 'Scroll';
-        if (rafId) cancelAnimationFrame(rafId);
-      }
-    }, {passive:true});
+    const m1 = document.getElementById('m1');
+    const m2 = document.getElementById('m2');
+    const m3 = document.getElementById('m3');
+    const m4 = document.getElementById('m4');
+
+    const m1pct = document.getElementById('m1pct');
+    const m2pct = document.getElementById('m2pct');
+    const m3pct = document.getElementById('m3pct');
+    const m4pct = document.getElementById('m4pct');
+
+    // clamp helper
+    const clamp = (n, a=0, b=1) => Math.max(a, Math.min(b, n));
+
+    // A lightweight “activation” model:
+    // - Structure rises early (system context)
+    // - Work rises mid (profiles / market)
+    // - Abstinence pressure rises late-mid (cleansing + instruction + padlock)
+    // - Loopholes + secrecy peaks latest (explicit section)
+    const updateMeter = () => {
+      const rect = story.getBoundingClientRect();
+      const viewH = window.innerHeight || document.documentElement.clientHeight;
+
+      // progress through story section (0..1)
+      // when top of story hits top of viewport => ~0; when bottom passes bottom => ~1
+      const total = rect.height + viewH;
+      const progressed = (viewH - rect.top) / total;
+      const t = clamp(progressed, 0, 1);
+
+      // shape curves (simple piecewise / eased)
+      const ease = (x) => 1 - Math.pow(1 - x, 3);
+
+      const structure = ease(clamp((t - 0.02) / 0.35));       // early
+      const work      = ease(clamp((t - 0.20) / 0.45));       // mid
+      const abst      = ease(clamp((t - 0.38) / 0.40));       // later
+      const secrecy   = ease(clamp((t - 0.58) / 0.36));       // latest
+
+      const set = (el, pctEl, val) => {
+        const pct = Math.round(val * 100);
+        el.style.width = pct + '%';
+        pctEl.textContent = pct + '%';
+      };
+
+      set(m1, m1pct, structure);
+      set(m2, m2pct, work);
+      set(m3, m3pct, abst);
+      set(m4, m4pct, secrecy);
+    };
+
+    // Only run meter updates after meter has entered once (small performance win)
+    let meterActive = false;
+    const meterObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting){
+          meterActive = true;
+          updateMeter();
+        }
+      });
+    }, { threshold: 0.25 });
+    meterObs.observe(meterCard);
+
+    window.addEventListener('scroll', () => { if (meterActive) updateMeter(); }, { passive:true });
+    window.addEventListener('resize', () => { if (meterActive) updateMeter(); });
   </script>
 </body>
 </html>
